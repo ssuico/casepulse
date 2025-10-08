@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Case Pulse
+
+A modern, real-time monitoring tool for Amazon cases across 1P, 2P, and 3P accounts. Built with Next.js 15, TypeScript, and Tailwind CSS.
+
+## Features
+
+- **Real-time Dashboard**: Monitor active cases, response times, and satisfaction rates
+- **Workspace Management**: Organize and track multiple Amazon accounts and brands
+- **Pulse-inspired Design**: Smooth animations and heartbeat-like visual motifs
+- **Responsive Interface**: Modern, clean design that works on all devices
+- **Dark/Light Mode**: Built-in theme switching with next-themes
+- **Professional Login**: Secure authentication with social login options
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **UI Components**: Radix UI primitives
+- **Icons**: Lucide React
+- **Theme**: next-themes for dark/light mode
+- **Fonts**: Geist Sans & Geist Mono
 
 ## Getting Started
 
-First, run the development server:
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+2. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+3. **Open your browser**:
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── dashboard/         # Main dashboard page
+│   ├── login/            # Authentication page
+│   ├── workspaces/       # Workspace management
+│   ├── layout.tsx        # Root layout with navbar/footer
+│   └── page.tsx          # Home page (redirects to dashboard)
+├── components/           # Reusable UI components
+│   ├── ui/              # Base UI components (Button, Card, etc.)
+│   ├── navbar.tsx       # Navigation component
+│   ├── footer.tsx       # Footer component
+│   └── pulse-animation.tsx # Pulse/heartbeat animations
+└── lib/                 # Utility functions
+    └── utils.ts         # Tailwind class utilities
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Key Components
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Dashboard
+- Real-time case metrics and KPIs
+- Recent activity feed
+- Quick action buttons
+- Responsive grid layout
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Workspaces
+- Account/brand management cards
+- Case statistics per workspace
+- Status indicators with pulse animations
+- Filter and search functionality
 
-## Learn More
+### Login Page
+- Professional authentication form
+- Social login options (Google, Twitter)
+- Responsive design with pulse animations
+- Secure form validation
 
-To learn more about Next.js, take a look at the following resources:
+## Design System
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The application uses a consistent design system with:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Color Palette**: Primary, secondary, and semantic colors
+- **Typography**: Geist font family for modern readability
+- **Spacing**: Consistent spacing scale using Tailwind
+- **Animations**: Pulse and heartbeat effects for real-time feel
+- **Components**: Reusable UI components with consistent styling
 
-## Deploy on Vercel
+## Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Available Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+### Adding New Pages
+
+1. Create a new directory in `src/app/`
+2. Add a `page.tsx` file
+3. The route will be automatically available
+
+### Styling Guidelines
+
+- Use Tailwind CSS classes for styling
+- Follow the established color scheme
+- Include pulse animations for real-time elements
+- Ensure responsive design for all screen sizes
+
+## Deployment
+
+The application is ready for deployment on Vercel, Netlify, or any other Next.js-compatible platform.
+
+```bash
+npm run build
+npm run start
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
