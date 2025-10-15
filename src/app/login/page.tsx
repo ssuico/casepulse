@@ -18,28 +18,27 @@ export default function LoginPage() {
     // Simulate login process
     setTimeout(() => {
       setIsLoading(false);
-      // Redirect to dashboard
-      window.location.href = "/dashboard";
+      // Redirect to cases
+      window.location.href = "/cases";
     }, 2000);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
-      {/* Background Pulse Animation */}
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'linear-gradient(135deg, #F0F5F9 0%, #C9D6DF 100%)' }}>
+      {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+        <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl opacity-30" style={{ background: '#bfc7d1' }} />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full blur-3xl opacity-30" style={{ background: '#bfc7d1' }} />
       </div>
 
       <div className="relative w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center space-x-2">
-            <div className="relative">
-              <Activity className="h-12 w-12 text-primary animate-pulse" />
-              <div className="absolute inset-0 h-12 w-12 rounded-full bg-primary/20 animate-ping" />
+          <Link href="/" className="inline-flex flex-col items-center">
+            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary shadow-lg mb-3">
+              <Activity className="h-10 w-10 text-white" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold text-primary">
               Case Pulse
             </span>
           </Link>
@@ -88,7 +87,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -100,9 +99,9 @@ export default function LoginPage() {
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="rounded border-input text-primary focus:ring-ring focus:ring-offset-0"
+                    className="rounded border-input text-primary focus:ring-ring focus:ring-offset-0 cursor-pointer"
                   />
-                  <span className="text-sm text-muted-foreground">Remember me</span>
+                  <span className="text-sm text-muted-foreground cursor-pointer">Remember me</span>
                 </label>
                 <Link
                   href="/forgot-password"

@@ -8,33 +8,32 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect to dashboard after a brief loading state
+    // Redirect to cases after a brief loading state
     const timer = setTimeout(() => {
-      router.push("/dashboard");
+      router.push("/cases");
     }, 2000);
 
     return () => clearTimeout(timer);
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Background Pulse Animation */}
+    <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #F0F5F9 0%, #C9D6DF 100%)' }}>
+      {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+        <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl opacity-30" style={{ background: '#bfc7d1' }} />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full blur-3xl opacity-30" style={{ background: '#bfc7d1', animationDelay: "1s" }} />
       </div>
 
       <div className="relative text-center">
         {/* Logo */}
         <div className="mb-8">
-          <div className="relative inline-block">
-            <Activity className="h-16 w-16 text-primary animate-pulse mx-auto" />
-            <div className="absolute inset-0 h-16 w-16 rounded-full bg-primary/20 animate-ping mx-auto" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary shadow-lg mx-auto mb-4">
+            <Activity className="h-12 w-12 text-white" />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mt-4">
+          <h1 className="text-4xl font-bold text-primary mt-4">
             Case Pulse
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2 text-lg">
             Real-time Amazon case monitoring
           </p>
         </div>
@@ -46,7 +45,7 @@ export default function Home() {
           <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
         </div>
         <p className="text-sm text-muted-foreground mt-4">
-          Loading your dashboard...
+          Loading your cases...
         </p>
       </div>
     </div>

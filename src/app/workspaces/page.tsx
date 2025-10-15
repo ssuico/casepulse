@@ -157,26 +157,16 @@ export default function WorkspacesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Workspaces</h1>
-              <p className="text-muted-foreground mt-1">
-                Manage your Amazon accounts and brands
-              </p>
-            </div>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Workspace
-            </Button>
-          </div>
-        </div>
+    <div>
+      {/* Header Actions */}
+      <div className="mb-6 flex items-center justify-end">
+        <Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Workspace
+        </Button>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div>
         {/* Filters */}
         <div className="mb-8">
           <div className="flex flex-wrap gap-2">
