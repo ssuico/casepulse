@@ -10,32 +10,38 @@ import {
   FolderKanban,
   FileText,
   BarChart3,
+  User,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navigation = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    name: "Workspaces",
-    href: "/workspaces",
-    icon: FolderKanban,
-  },
+  // {
+  //   name: "Dashboard",
+  //   href: "/dashboard",
+  //   icon: LayoutDashboard,
+  // },
+  // {
+  //   name: "Workspaces",
+  //   href: "/workspaces",
+  //   icon: FolderKanban,
+  // },
   {
     name: "Cases",
     href: "/cases",
     icon: FileText,
   },
   {
-    name: "Analytics",
-    href: "/analytics",
-    icon: BarChart3,
+    name: "Accounts",
+    href: "/accounts",
+    icon: User,
   },
+  // {
+  //   name: "Analytics",
+  //   href: "/analytics",
+  //   icon: BarChart3,
+  // },
 ];
 
 interface SidebarProps {

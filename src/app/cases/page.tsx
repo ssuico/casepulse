@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -80,6 +80,7 @@ export default function CasesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [isClient, setIsClient] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -127,6 +128,11 @@ export default function CasesPage() {
   };
 
   const formatDate = (dateString: string) => {
+    // Only format dates on client side to prevent hydration mismatch
+    if (!isClient) {
+      return new Date(dateString).toLocaleDateString();
+    }
+    
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
@@ -146,6 +152,10 @@ export default function CasesPage() {
     const matchesPriority = priorityFilter === "all" || caseItem.priority === priorityFilter;
     return matchesSearch && matchesStatus && matchesPriority;
   });
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <div>
@@ -188,6 +198,7 @@ export default function CasesPage() {
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer"
+              suppressHydrationWarning
             >
               <option value="all">All Status</option>
               <option value="open">Open</option>
@@ -199,6 +210,7 @@ export default function CasesPage() {
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
               className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer"
+              suppressHydrationWarning
             >
               <option value="all">All Priority</option>
               <option value="urgent">Urgent</option>

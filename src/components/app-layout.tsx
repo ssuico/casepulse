@@ -18,7 +18,7 @@ interface AppLayoutProps {
 const STANDALONE_PAGES = ["/", "/login", "/signup", "/forgot-password"];
 
 // Pages that should have header but no sidebar
-const HEADER_ONLY_PAGES = ["/cases"];
+const HEADER_ONLY_PAGES: string[] = [];
 
 export function AppLayout({ children }: AppLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -65,6 +65,11 @@ export function AppLayout({ children }: AppLayoutProps) {
         return {
           title: "Cases",
           description: "Track and manage all your Amazon cases"
+        };
+      case "/accounts":
+        return {
+          title: "Accounts",
+          description: "Manage your Seller Central account credentials"
         };
       case "/analytics":
         return {
