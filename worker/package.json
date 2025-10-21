@@ -1,0 +1,17 @@
+{
+  "name": "casepulse-worker",
+  "version": "1.0.0",
+  "description": "Puppeteer worker for Amazon Seller Central automation",
+  "main": "seller-central-login.js",
+  "type": "module",
+  "scripts": {
+    "start": "node seller-central-login.js",
+    "dev": "node seller-central-login.js"
+  },
+  "dependencies": {
+    "puppeteer": "^23.11.1",
+    "dotenv": "^16.4.7",
+    "otplib": "^12.0.1"
+  }
+}
+
