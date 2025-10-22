@@ -28,12 +28,12 @@ const navigation = [
   //   icon: FolderKanban,
   // },
   {
-    name: "Cases",
+    name: "Amazon Cases",
     href: "/cases",
     icon: FileText,
   },
   {
-    name: "Accounts",
+    name: "Brands & Accounts",
     href: "/accounts",
     icon: User,
   },

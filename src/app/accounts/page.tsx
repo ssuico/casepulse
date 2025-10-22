@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AddAccountModal } from "@/components/add-account-modal";
 import { AccountsTable } from "@/components/accounts-table";
-import { User, RefreshCw, Plus } from "lucide-react";
+import { AddBrandModal } from "@/components/add-brand-modal";
+import { BrandsTable } from "@/components/brands-table";
+import { User, RefreshCw, Plus, Tag } from "lucide-react";
 
 interface Account {
   _id: string;
@@ -14,10 +16,25 @@ interface Account {
   updatedAt: string;
 }
 
+interface Brand {
+  _id: string;
+  brandName: string;
+  sellerCentralAccountId: {
+    _id: string;
+    accountName: string;
+  };
+  brandUrl: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function AccountsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState(true);
+  const [isLoadingBrands, setIsLoadingBrands] = useState(true);
 
   // Fetch accounts
   const fetchAccounts = async () => {
@@ -35,24 +52,36 @@ export default function AccountsPage() {
     }
   };
 
+  // Fetch brands
+  const fetchBrands = async () => {
+    setIsLoadingBrands(true);
+    try {
+      const response = await fetch("/api/brands");
+      const data = await response.json();
+      if (data.success) {
+        setBrands(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch brands:", error);
+    } finally {
+      setIsLoadingBrands(false);
+    }
+  };
+
   useEffect(() => {
     fetchAccounts();
+    fetchBrands();
   }, []);
 
   return (
     <div>
-      {/* Page Header */}
+      {/* Seller Central Accounts Section */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <User className="h-8 w-8" />
-              Seller Central Accounts
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              Manage your Amazon Seller Central account credentials securely. All passwords and 2FA keys are encrypted.
-            </p>
-          </div>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <User className="h-7 w-7" />
+            Seller Central Accounts
+          </h2>
           <div className="flex items-center space-x-2">
             <Button 
               variant="outline" 
@@ -104,23 +133,101 @@ export default function AccountsPage() {
             </div>
           </div>
         </div>
+
+        {/* Accounts Table */}
+        {isLoadingAccounts ? (
+          <div className="bg-card border rounded-lg p-12 text-center">
+            <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground mx-auto mb-2" />
+            <p className="text-muted-foreground">Loading accounts...</p>
+          </div>
+        ) : (
+          <AccountsTable accounts={accounts} onAccountDeleted={fetchAccounts} />
+        )}
       </div>
 
-      {/* Accounts Table */}
-      {isLoadingAccounts ? (
-        <div className="bg-card border rounded-lg p-12 text-center">
-          <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground mx-auto mb-2" />
-          <p className="text-muted-foreground">Loading accounts...</p>
+      {/* Brands Section */}
+      <div className="mt-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Tag className="h-7 w-7" />
+            Brands
+          </h2>
+          <div className="flex items-center space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={fetchBrands}
+              disabled={isLoadingBrands}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingBrands ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button onClick={() => setIsBrandModalOpen(true)} size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Brand
+            </Button>
+          </div>
         </div>
-      ) : (
-        <AccountsTable accounts={accounts} onAccountDeleted={fetchAccounts} />
-      )}
+
+        {/* Stats Cards for Brands */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div className="bg-card border rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total Brands</p>
+                <p className="text-2xl font-bold">{brands.length}</p>
+              </div>
+              <Tag className="h-8 w-8 text-primary" />
+            </div>
+          </div>
+          <div className="bg-card border rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Active</p>
+                <p className="text-2xl font-bold text-green-600">{brands.length}</p>
+              </div>
+              <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
+            </div>
+          </div>
+          <div className="bg-card border rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Last Updated</p>
+                <p className="text-sm font-medium">
+                  {brands.length > 0 
+                    ? new Date(Math.max(...brands.map(b => new Date(b.updatedAt).getTime()))).toLocaleDateString()
+                    : 'N/A'
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Brands Table */}
+        {isLoadingBrands ? (
+          <div className="bg-card border rounded-lg p-12 text-center">
+            <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground mx-auto mb-2" />
+            <p className="text-muted-foreground">Loading brands...</p>
+          </div>
+        ) : (
+          <BrandsTable brands={brands} onBrandDeleted={fetchBrands} accounts={accounts} />
+        )}
+      </div>
 
       {/* Add Account Modal */}
       <AddAccountModal
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         onAccountAdded={fetchAccounts}
+      />
+
+      {/* Add Brand Modal */}
+      <AddBrandModal
+        open={isBrandModalOpen}
+        onOpenChange={setIsBrandModalOpen}
+        onBrandAdded={fetchBrands}
+        accounts={accounts}
       />
     </div>
   );

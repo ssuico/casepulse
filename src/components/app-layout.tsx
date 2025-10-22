@@ -63,13 +63,13 @@ export function AppLayout({ children }: AppLayoutProps) {
         };
       case "/cases":
         return {
-          title: "Cases",
+          title: "Amazon Cases",
           description: "Track and manage all your Amazon cases"
         };
       case "/accounts":
         return {
-          title: "Accounts",
-          description: "Manage your Seller Central account credentials"
+          title: "Brands & Accounts",
+          description: "Manage your brands and Amazon Seller Central account credentials securely. All passwords and 2FA keys are encrypted."
         };
       case "/analytics":
         return {

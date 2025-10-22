@@ -76,11 +76,30 @@ const mockCases = [
   },
 ];
 
+interface Account {
+  _id: string;
+  accountName: string;
+}
+
+interface Brand {
+  _id: string;
+  brandName: string;
+  sellerCentralAccountId: {
+    _id: string;
+    accountName: string;
+  };
+  brandUrl: string;
+}
+
 export default function CasesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [isClient, setIsClient] = useState(false);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [selectedAccount, setSelectedAccount] = useState<string>("all");
+  const [selectedBrand, setSelectedBrand] = useState<string>("all");
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -155,29 +174,100 @@ export default function CasesPage() {
 
   useEffect(() => {
     setIsClient(true);
+    fetchAccounts();
+    fetchBrands();
   }, []);
+
+  // Fetch accounts
+  const fetchAccounts = async () => {
+    try {
+      const response = await fetch("/api/accounts");
+      const data = await response.json();
+      if (data.success) {
+        setAccounts(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch accounts:", error);
+    }
+  };
+
+  // Fetch brands
+  const fetchBrands = async () => {
+    try {
+      const response = await fetch("/api/brands");
+      const data = await response.json();
+      if (data.success) {
+        setBrands(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch brands:", error);
+    }
+  };
+
+  // Filter brands based on selected account
+  const filteredBrands = selectedAccount === "all" 
+    ? brands 
+    : brands.filter(brand => brand.sellerCentralAccountId._id === selectedAccount);
+
+  // Reset brand selection when account changes
+  useEffect(() => {
+    setSelectedBrand("all");
+  }, [selectedAccount]);
 
   return (
     <div>
-      {/* Page Title */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Cases</h1>
-            <p className="text-muted-foreground mt-1">
-              Track and manage all your Amazon cases
-            </p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              New Case
-            </Button>
-          </div>
+      {/* Action Buttons */}
+      <div className="mb-6 flex justify-end">
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" size="sm">
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+          <Button size="sm">
+            <Plus className="h-4 w-4 mr-2" />
+            New Case
+          </Button>
+        </div>
+      </div>
+
+      {/* Account and Brand Filters */}
+      <div className="mb-4">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <select
+            value={selectedAccount}
+            onChange={(e) => setSelectedAccount(e.target.value)}
+            className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer flex-1 sm:flex-initial"
+            suppressHydrationWarning
+          >
+            <option value="all">All Accounts</option>
+            {accounts.map((account) => (
+              <option key={account._id} value={account._id}>
+                {account.accountName}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedBrand}
+            onChange={(e) => setSelectedBrand(e.target.value)}
+            className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer flex-1 sm:flex-initial"
+            disabled={selectedAccount === "all" && brands.length > 0}
+            suppressHydrationWarning
+          >
+            <option value="all">All Brands</option>
+            {filteredBrands.map((brand) => (
+              <option key={brand._id} value={brand._id}>
+                {brand.brandName}
+              </option>
+            ))}
+          </select>
+          <Button 
+            size="sm"
+            disabled={selectedAccount === "all" || selectedBrand === "all"}
+            className="whitespace-nowrap"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Request Cases
+          </Button>
         </div>
       </div>
 

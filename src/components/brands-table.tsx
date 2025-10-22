@@ -2,44 +2,54 @@
 
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Trash2, Loader2, User, Calendar, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Pencil } from "lucide-react";
-import { EditAccountModal } from "@/components/edit-account-modal";
-import { DeleteAccountModal } from "@/components/delete-account-modal";
+import { Trash2, Loader2, Tag, Calendar, ExternalLink, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Pencil } from "lucide-react";
+import { EditBrandModal } from "@/components/edit-brand-modal";
+import { DeleteBrandModal } from "@/components/delete-brand-modal";
 
-interface Account {
+interface Brand {
   _id: string;
-  accountName: string;
-  username: string;
+  brandName: string;
+  sellerCentralAccountId: {
+    _id: string;
+    accountName: string;
+  };
+  brandUrl: string;
   createdAt: string;
   updatedAt: string;
 }
 
-interface AccountsTableProps {
-  accounts: Account[];
-  onAccountDeleted: () => void;
+interface Account {
+  _id: string;
+  accountName: string;
 }
 
-type SortField = 'accountName' | 'username' | 'createdAt';
+interface BrandsTableProps {
+  brands: Brand[];
+  onBrandDeleted: () => void;
+  accounts: Account[];
+}
+
+type SortField = 'brandName' | 'sellerCentralAccountId.accountName' | 'createdAt';
 type SortOrder = 'asc' | 'desc';
 
-export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps) {
+export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
-  const [editingAccount, setEditingAccount] = useState<Account | null>(null);
+  const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [deletingAccount, setDeletingAccount] = useState<Account | null>(null);
+  const [deletingBrand, setDeletingBrand] = useState<Brand | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const handleEdit = (account: Account) => {
-    setEditingAccount(account);
+  const handleEdit = (brand: Brand) => {
+    setEditingBrand(brand);
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteClick = (account: Account) => {
-    setDeletingAccount(account);
+  const handleDeleteClick = (brand: Brand) => {
+    setDeletingBrand(brand);
     setIsDeleteModalOpen(true);
   };
 
@@ -47,19 +57,19 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
     setDeletingId(id);
 
     try {
-      const response = await fetch(`/api/accounts/${id}`, {
+      const response = await fetch(`/api/brands/${id}`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || "Failed to delete account");
+        throw new Error(data.message || "Failed to delete brand");
       }
 
       setIsDeleteModalOpen(false);
-      onAccountDeleted();
+      onBrandDeleted();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to delete account");
+      alert(err instanceof Error ? err.message : "Failed to delete brand");
     } finally {
       setDeletingId(null);
     }
@@ -75,14 +85,20 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
     setCurrentPage(1);
   };
 
-  const sortedAccounts = useMemo(() => {
-    const sorted = [...accounts].sort((a, b) => {
-      let aValue: string | number = a[sortField];
-      let bValue: string | number = b[sortField];
+  const sortedBrands = useMemo(() => {
+    const sorted = [...brands].sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
 
-      if (sortField === 'createdAt') {
+      if (sortField === 'sellerCentralAccountId.accountName') {
+        aValue = a.sellerCentralAccountId.accountName;
+        bValue = b.sellerCentralAccountId.accountName;
+      } else if (sortField === 'createdAt') {
         aValue = new Date(a.createdAt).getTime();
         bValue = new Date(b.createdAt).getTime();
+      } else {
+        aValue = a.brandName;
+        bValue = b.brandName;
       }
 
       if (typeof aValue === 'string' && typeof bValue === 'string') {
@@ -99,14 +115,14 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
     });
 
     return sorted;
-  }, [accounts, sortField, sortOrder]);
+  }, [brands, sortField, sortOrder]);
 
-  const paginatedAccounts = useMemo(() => {
+  const paginatedBrands = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
-    return sortedAccounts.slice(startIndex, startIndex + pageSize);
-  }, [sortedAccounts, currentPage, pageSize]);
+    return sortedBrands.slice(startIndex, startIndex + pageSize);
+  }, [sortedBrands, currentPage, pageSize]);
 
-  const totalPages = Math.ceil(accounts.length / pageSize);
+  const totalPages = Math.ceil(brands.length / pageSize);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -128,13 +144,13 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
       : <ArrowDown className="h-4 w-4 ml-1 inline" />;
   };
 
-  if (accounts.length === 0) {
+  if (brands.length === 0) {
     return (
       <div className="text-center py-12 bg-card border rounded-lg">
-        <User className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-semibold mb-2">No accounts yet</h3>
+        <Tag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+        <h3 className="text-lg font-semibold mb-2">No brands yet</h3>
         <p className="text-muted-foreground mb-4">
-          Add your first Seller Central account to get started.
+          Add your first brand to get started.
         </p>
       </div>
     );
@@ -148,23 +164,20 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
             <tr>
               <th 
                 className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/70 transition-colors"
-                onClick={() => handleSort('accountName')}
+                onClick={() => handleSort('brandName')}
               >
-                Account Name
-                <SortIcon field="accountName" />
+                Brand Name
+                <SortIcon field="brandName" />
               </th>
               <th 
                 className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/70 transition-colors"
-                onClick={() => handleSort('username')}
+                onClick={() => handleSort('sellerCentralAccountId.accountName')}
               >
-                Username
-                <SortIcon field="username" />
+                Seller Central Account
+                <SortIcon field="sellerCentralAccountId.accountName" />
               </th>
               <th className="px-4 py-2 text-left text-sm font-medium">
-                Password
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium">
-                2FA Key
+                Brand URL
               </th>
               <th 
                 className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/70 transition-colors"
@@ -179,38 +192,39 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
             </tr>
           </thead>
           <tbody className="divide-y">
-            {paginatedAccounts.map((account) => (
+            {paginatedBrands.map((brand) => (
               <tr
-                key={account._id}
+                key={brand._id}
                 className="hover:bg-muted/50 transition-colors"
               >
                 <td className="px-4 py-2">
                   <div className="flex items-center space-x-3">
                     <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <User className="h-4 w-4 text-primary" />
+                      <Tag className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{account.accountName}</p>
+                      <p className="font-medium text-sm">{brand.brandName}</p>
                     </div>
                   </div>
                 </td>
                 <td className="px-4 py-2">
-                  <p className="text-sm">{account.username}</p>
+                  <p className="text-sm">{brand.sellerCentralAccountId.accountName}</p>
                 </td>
                 <td className="px-4 py-2">
-                  <span className="text-sm text-muted-foreground">
-                    ••••••••
-                  </span>
-                </td>
-                <td className="px-4 py-2">
-                  <span className="text-sm text-muted-foreground">
-                    ••••••••
-                  </span>
+                  <a 
+                    href={brand.brandUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary hover:underline flex items-center gap-1"
+                  >
+                    <span className="max-w-[300px] truncate">{brand.brandUrl}</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
-                    <span>{formatDate(account.createdAt)}</span>
+                    <span>{formatDate(brand.createdAt)}</span>
                   </div>
                 </td>
                 <td className="px-4 py-2">
@@ -218,7 +232,7 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleEdit(account)}
+                      onClick={() => handleEdit(brand)}
                       className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                     >
                       <Pencil className="h-4 w-4" />
@@ -226,7 +240,7 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleDeleteClick(account)}
+                      onClick={() => handleDeleteClick(brand)}
                       className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -244,8 +258,8 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">
             Showing {(currentPage - 1) * pageSize + 1} to{" "}
-            {Math.min(currentPage * pageSize, accounts.length)} of{" "}
-            {accounts.length} accounts
+            {Math.min(currentPage * pageSize, brands.length)} of{" "}
+            {brands.length} brands
           </span>
           <select
             value={pageSize}
@@ -301,21 +315,22 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
         </div>
       </div>
 
-      {/* Edit Account Modal */}
-      <EditAccountModal
+      {/* Edit Brand Modal */}
+      <EditBrandModal
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
-        onAccountUpdated={onAccountDeleted}
-        account={editingAccount}
+        onBrandUpdated={onBrandDeleted}
+        brand={editingBrand}
+        accounts={accounts}
       />
 
-      {/* Delete Account Modal */}
-      <DeleteAccountModal
+      {/* Delete Brand Modal */}
+      <DeleteBrandModal
         open={isDeleteModalOpen}
         onOpenChange={setIsDeleteModalOpen}
-        account={deletingAccount}
+        brand={deletingBrand}
         onConfirmDelete={handleConfirmDelete}
-        isDeleting={deletingId === deletingAccount?._id}
+        isDeleting={deletingId === deletingBrand?._id}
       />
     </div>
   );
