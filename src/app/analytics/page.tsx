@@ -83,96 +83,70 @@ export default function AnalyticsPage() {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-card border rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <BarChart3 className="h-6 w-6 text-primary" />
-            </div>
-            <div className="flex items-center text-green-600 text-sm">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              +12.5%
-            </div>
+        {/* Total Cases */}
+        <div className="relative bg-blue-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <BarChart3 className="h-16 w-16 text-white" />
           </div>
-          <p className="text-sm text-muted-foreground mb-1">Total Cases</p>
-          <p className="text-3xl font-bold">{mockStats.totalCases.toLocaleString()}</p>
-          <p className="text-xs text-muted-foreground mt-2">vs previous period</p>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">{mockStats.totalCases.toLocaleString()}</p>
+            <p className="text-sm text-white/80 font-medium">Total Cases</p>
+          </div>
         </div>
 
-        <div className="bg-card border rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircle className="h-6 w-6 text-green-600" />
-            </div>
-            <div className="flex items-center text-green-600 text-sm">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              +8.2%
-            </div>
+        {/* Resolved Cases */}
+        <div className="relative bg-green-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <CheckCircle className="h-16 w-16 text-white" />
           </div>
-          <p className="text-sm text-muted-foreground mb-1">Resolved Cases</p>
-          <p className="text-3xl font-bold">{mockStats.resolvedCases.toLocaleString()}</p>
-          <p className="text-xs text-muted-foreground mt-2">
-            {((mockStats.resolvedCases / mockStats.totalCases) * 100).toFixed(1)}% resolution rate
-          </p>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">{mockStats.resolvedCases.toLocaleString()}</p>
+            <p className="text-sm text-white/80 font-medium">Resolved Cases</p>
+          </div>
         </div>
 
-        <div className="bg-card border rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Clock className="h-6 w-6 text-blue-600" />
-            </div>
-            <div className="flex items-center text-green-600 text-sm">
-              <TrendingDown className="h-4 w-4 mr-1" />
-              -15.3%
-            </div>
+        {/* Avg Resolution Time */}
+        <div className="relative bg-cyan-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <Clock className="h-16 w-16 text-white" />
           </div>
-          <p className="text-sm text-muted-foreground mb-1">Avg Resolution Time</p>
-          <p className="text-3xl font-bold">{mockStats.avgResolutionTime}</p>
-          <p className="text-xs text-muted-foreground mt-2">Faster than last period</p>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">{mockStats.avgResolutionTime}</p>
+            <p className="text-sm text-white/80 font-medium">Avg Resolution Time</p>
+          </div>
         </div>
 
-        <div className="bg-card border rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Users className="h-6 w-6 text-purple-600" />
-            </div>
-            <div className="flex items-center text-green-600 text-sm">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              +3.1%
-            </div>
+        {/* Customer Satisfaction */}
+        <div className="relative bg-purple-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <Users className="h-16 w-16 text-white" />
           </div>
-          <p className="text-sm text-muted-foreground mb-1">Customer Satisfaction</p>
-          <p className="text-3xl font-bold">{mockStats.customerSatisfaction}%</p>
-          <p className="text-xs text-muted-foreground mt-2">Based on surveys</p>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">{mockStats.customerSatisfaction}%</p>
+            <p className="text-sm text-white/80 font-medium">Customer Satisfaction</p>
+          </div>
         </div>
 
-        <div className="bg-card border rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Activity className="h-6 w-6 text-orange-600" />
-            </div>
-            <div className="flex items-center text-green-600 text-sm">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              +1.2%
-            </div>
+        {/* Response Rate */}
+        <div className="relative bg-orange-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <Activity className="h-16 w-16 text-white" />
           </div>
-          <p className="text-sm text-muted-foreground mb-1">Response Rate</p>
-          <p className="text-3xl font-bold">{mockStats.responseRate}%</p>
-          <p className="text-xs text-muted-foreground mt-2">Within SLA</p>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">{mockStats.responseRate}%</p>
+            <p className="text-sm text-white/80 font-medium">Response Rate</p>
+          </div>
         </div>
 
-        <div className="bg-card border rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <AlertTriangle className="h-6 w-6 text-red-600" />
-            </div>
-            <div className="flex items-center text-red-600 text-sm">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              +0.8%
-            </div>
+        {/* Escalation Rate */}
+        <div className="relative bg-red-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <AlertTriangle className="h-16 w-16 text-white" />
           </div>
-          <p className="text-sm text-muted-foreground mb-1">Escalation Rate</p>
-          <p className="text-3xl font-bold">{mockStats.escalationRate}%</p>
-          <p className="text-xs text-muted-foreground mt-2">Requires attention</p>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">{mockStats.escalationRate}%</p>
+            <p className="text-sm text-white/80 font-medium">Escalation Rate</p>
+          </div>
         </div>
       </div>
 

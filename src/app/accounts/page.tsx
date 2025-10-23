@@ -101,35 +101,41 @@ export default function AccountsPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="bg-card border rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Accounts</p>
-                <p className="text-2xl font-bold">{accounts.length}</p>
-              </div>
-              <User className="h-8 w-8 text-primary" />
+          {/* Total Accounts Card */}
+          <div className="relative bg-blue-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+              <User className="h-16 w-16 text-white" />
+            </div>
+            <div className="relative text-right">
+              <p className="text-4xl font-bold text-white mb-1">{accounts.length}</p>
+              <p className="text-sm text-white/80 font-medium">Total Accounts</p>
             </div>
           </div>
-          <div className="bg-card border rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Active</p>
-                <p className="text-2xl font-bold text-green-600">{accounts.length}</p>
-              </div>
-              <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
+
+          {/* Active Accounts Card */}
+          <div className="relative bg-green-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+              <User className="h-16 w-16 text-white" />
+            </div>
+            <div className="relative text-right">
+              <p className="text-4xl font-bold text-white mb-1">{accounts.length}</p>
+              <p className="text-sm text-white/80 font-medium">Active Accounts</p>
             </div>
           </div>
-          <div className="bg-card border rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Last Updated</p>
-                <p className="text-sm font-medium">
-                  {accounts.length > 0 
-                    ? new Date(Math.max(...accounts.map(a => new Date(a.updatedAt).getTime()))).toLocaleDateString()
-                    : 'N/A'
-                  }
-                </p>
-              </div>
+
+          {/* Last Updated Card */}
+          <div className="relative bg-cyan-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+              <RefreshCw className="h-16 w-16 text-white" />
+            </div>
+            <div className="relative text-right">
+              <p className="text-xl font-bold text-white mb-1">
+                {accounts.length > 0 
+                  ? new Date(Math.max(...accounts.map(a => new Date(a.updatedAt).getTime()))).toLocaleDateString()
+                  : 'N/A'
+                }
+              </p>
+              <p className="text-sm text-white/80 font-medium">Last Updated</p>
             </div>
           </div>
         </div>
@@ -169,41 +175,6 @@ export default function AccountsPage() {
           </div>
         </div>
 
-        {/* Stats Cards for Brands */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="bg-card border rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Brands</p>
-                <p className="text-2xl font-bold">{brands.length}</p>
-              </div>
-              <Tag className="h-8 w-8 text-primary" />
-            </div>
-          </div>
-          <div className="bg-card border rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Active</p>
-                <p className="text-2xl font-bold text-green-600">{brands.length}</p>
-              </div>
-              <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
-            </div>
-          </div>
-          <div className="bg-card border rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Last Updated</p>
-                <p className="text-sm font-medium">
-                  {brands.length > 0 
-                    ? new Date(Math.max(...brands.map(b => new Date(b.updatedAt).getTime()))).toLocaleDateString()
-                    : 'N/A'
-                  }
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Brands Table */}
         {isLoadingBrands ? (
           <div className="bg-card border rounded-lg p-12 text-center">
@@ -232,4 +203,7 @@ export default function AccountsPage() {
     </div>
   );
 }
+
+
+
 

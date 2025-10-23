@@ -94,74 +94,46 @@ export default function DashboardPage() {
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Cases */}
-          <div className="bg-card border rounded-lg p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Cases</p>
-                <p className="text-3xl font-bold">{mockData.totalCases.toLocaleString()}</p>
-              </div>
-              <div className="relative">
-                <BarChart3 className="h-8 w-8 text-primary" />
-                <div className="absolute inset-0 h-8 w-8 rounded-full bg-primary/20 animate-pulse" />
-              </div>
+          <div className="relative bg-blue-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+              <BarChart3 className="h-16 w-16 text-white" />
             </div>
-            <div className="mt-4 flex items-center text-sm">
-              <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-              <span className="text-green-600">+12% from last month</span>
+            <div className="relative text-right">
+              <p className="text-4xl font-bold text-white mb-1">{mockData.totalCases.toLocaleString()}</p>
+              <p className="text-sm text-white/80 font-medium">Total Cases</p>
             </div>
           </div>
 
           {/* Active Cases */}
-          <div className="bg-card border rounded-lg p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Cases</p>
-                <p className="text-3xl font-bold text-orange-600">{mockData.activeCases}</p>
-              </div>
-              <div className="relative">
-                <Activity className="h-8 w-8 text-orange-500 animate-pulse" />
-                <div className="absolute inset-0 h-8 w-8 rounded-full bg-orange-500/20 animate-ping" />
-              </div>
+          <div className="relative bg-orange-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+              <Activity className="h-16 w-16 text-white" />
             </div>
-            <div className="mt-4 flex items-center text-sm">
-              <Clock className="h-4 w-4 text-orange-500 mr-1" />
-              <span className="text-orange-600">Avg: {mockData.avgResponseTime}</span>
+            <div className="relative text-right">
+              <p className="text-4xl font-bold text-white mb-1">{mockData.activeCases}</p>
+              <p className="text-sm text-white/80 font-medium">Active Cases</p>
             </div>
           </div>
 
           {/* Resolved Cases */}
-          <div className="bg-card border rounded-lg p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Resolved Cases</p>
-                <p className="text-3xl font-bold text-green-600">{mockData.resolvedCases}</p>
-              </div>
-              <div className="relative">
-                <CheckCircle className="h-8 w-8 text-green-500" />
-                <div className="absolute inset-0 h-8 w-8 rounded-full bg-green-500/20 animate-pulse" />
-              </div>
+          <div className="relative bg-green-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+              <CheckCircle className="h-16 w-16 text-white" />
             </div>
-            <div className="mt-4 flex items-center text-sm">
-              <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-              <span className="text-green-600">+8% this week</span>
+            <div className="relative text-right">
+              <p className="text-4xl font-bold text-white mb-1">{mockData.resolvedCases}</p>
+              <p className="text-sm text-white/80 font-medium">Resolved Cases</p>
             </div>
           </div>
 
           {/* Urgent Cases */}
-          <div className="bg-card border rounded-lg p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Urgent Cases</p>
-                <p className="text-3xl font-bold text-red-600">{mockData.urgentCases}</p>
-              </div>
-              <div className="relative">
-                <AlertTriangle className="h-8 w-8 text-red-500 animate-pulse" />
-                <div className="absolute inset-0 h-8 w-8 rounded-full bg-red-500/20 animate-ping" />
-              </div>
+          <div className="relative bg-red-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+              <AlertTriangle className="h-16 w-16 text-white" />
             </div>
-            <div className="mt-4 flex items-center text-sm">
-              <AlertTriangle className="h-4 w-4 text-red-500 mr-1" />
-              <span className="text-red-600">Requires attention</span>
+            <div className="relative text-right">
+              <p className="text-4xl font-bold text-white mb-1">{mockData.urgentCases}</p>
+              <p className="text-sm text-white/80 font-medium">Urgent Cases</p>
             </div>
           </div>
         </div>

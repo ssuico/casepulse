@@ -461,46 +461,53 @@ export default function CasesPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Total Cases</p>
-              <p className="text-2xl font-bold">{mockCases.length}</p>
-            </div>
-            <FileText className="h-8 w-8 text-primary" />
+        {/* Total Cases Card */}
+        <div className="relative bg-blue-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <FileText className="h-16 w-16 text-white" />
+          </div>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">{mockCases.length}</p>
+            <p className="text-sm text-white/80 font-medium">Total Cases</p>
           </div>
         </div>
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Open</p>
-              <p className="text-2xl font-bold text-blue-600">
-                {mockCases.filter(c => c.status === "open").length}
-              </p>
-            </div>
-            <FileText className="h-8 w-8 text-blue-600" />
+
+        {/* Open Cases Card */}
+        <div className="relative bg-red-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <FileText className="h-16 w-16 text-white" />
+          </div>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">
+              {mockCases.filter(c => c.status === "open").length}
+            </p>
+            <p className="text-sm text-white/80 font-medium">Open Cases</p>
           </div>
         </div>
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">In Progress</p>
-              <p className="text-2xl font-bold text-yellow-600">
-                {mockCases.filter(c => c.status === "in_progress").length}
-              </p>
-            </div>
-            <RefreshCw className="h-8 w-8 text-yellow-600" />
+
+        {/* In Progress Card */}
+        <div className="relative bg-green-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <RefreshCw className="h-16 w-16 text-white" />
+          </div>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">
+              {mockCases.filter(c => c.status === "in_progress").length}
+            </p>
+            <p className="text-sm text-white/80 font-medium">In Progress</p>
           </div>
         </div>
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Urgent</p>
-              <p className="text-2xl font-bold text-red-600">
-                {mockCases.filter(c => c.priority === "urgent").length}
-              </p>
-            </div>
-            <AlertTriangle className="h-8 w-8 text-red-600" />
+
+        {/* Urgent Cases Card */}
+        <div className="relative bg-cyan-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <AlertTriangle className="h-16 w-16 text-white" />
+          </div>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">
+              {mockCases.filter(c => c.priority === "urgent").length}
+            </p>
+            <p className="text-sm text-white/80 font-medium">Urgent Priority</p>
           </div>
         </div>
       </div>

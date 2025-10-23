@@ -206,31 +206,36 @@ export default function UsersPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Total Users</p>
-              <p className="text-2xl font-bold">{totalUsers}</p>
-            </div>
-            <UsersIcon className="h-8 w-8 text-primary" />
+        {/* Total Users Card */}
+        <div className="relative bg-blue-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <UsersIcon className="h-16 w-16 text-white" />
+          </div>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">{totalUsers}</p>
+            <p className="text-sm text-white/80 font-medium">Total Users</p>
           </div>
         </div>
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Managers</p>
-              <p className="text-2xl font-bold text-purple-600">{totalManagers}</p>
-            </div>
-            <Shield className="h-8 w-8 text-purple-600" />
+
+        {/* Managers Card */}
+        <div className="relative bg-purple-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <Shield className="h-16 w-16 text-white" />
+          </div>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">{totalManagers}</p>
+            <p className="text-sm text-white/80 font-medium">Managers</p>
           </div>
         </div>
-        <div className="bg-card border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Regular Users</p>
-              <p className="text-2xl font-bold text-blue-600">{totalRegularUsers}</p>
-            </div>
-            <UserIcon className="h-8 w-8 text-blue-600" />
+
+        {/* Regular Users Card */}
+        <div className="relative bg-cyan-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
+            <UserIcon className="h-16 w-16 text-white" />
+          </div>
+          <div className="relative text-right">
+            <p className="text-4xl font-bold text-white mb-1">{totalRegularUsers}</p>
+            <p className="text-sm text-white/80 font-medium">Regular Users</p>
           </div>
         </div>
       </div>
