@@ -100,6 +100,7 @@ export default function CasesPage() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<string>("all");
   const [selectedBrand, setSelectedBrand] = useState<string>("all");
+  const [isRequestingCases, setIsRequestingCases] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -214,6 +215,41 @@ export default function CasesPage() {
     setSelectedBrand("all");
   }, [selectedAccount]);
 
+  // Handle request cases button click
+  const handleRequestCases = async () => {
+    if (selectedAccount === "all" || selectedBrand === "all") {
+      return;
+    }
+
+    setIsRequestingCases(true);
+    
+    try {
+      const response = await fetch("/api/scrape", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          accountId: selectedAccount,
+          brandId: selectedBrand,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`✅ Scraper started for ${data.data.brandName}!\nCheck the browser window.`);
+      } else {
+        alert(`❌ Failed to start scraper: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Failed to request cases:", error);
+      alert("❌ Failed to start scraper. Please try again.");
+    } finally {
+      setIsRequestingCases(false);
+    }
+  };
+
   return (
     <div>
       {/* Action Buttons */}
@@ -262,11 +298,12 @@ export default function CasesPage() {
           </select>
           <Button 
             size="sm"
-            disabled={selectedAccount === "all" || selectedBrand === "all"}
+            disabled={selectedAccount === "all" || selectedBrand === "all" || isRequestingCases}
             className="whitespace-nowrap"
+            onClick={handleRequestCases}
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Request Cases
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRequestingCases ? 'animate-spin' : ''}`} />
+            {isRequestingCases ? "Starting..." : "Request Cases"}
           </Button>
         </div>
       </div>

@@ -10,6 +10,7 @@ import {
   FileText,
   BarChart3,
   User,
+  Users,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,11 @@ const navigation = [
     name: "Accounts",
     href: "/accounts",
     icon: User,
+  },
+  {
+    name: "User Management",
+    href: "/users",
+    icon: Users,
   },
   // {
   //   name: "Analytics",

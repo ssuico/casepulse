@@ -17,6 +17,10 @@ const CONFIG = {
     REFRIGIWEAR_US: process.env.SC_BRAND_CP_REFRIGIWEAR_US,
     BABYEXPERT_US: process.env.SC_BRAND_CP_BABYEXPERT_US,
   },
+  // Dynamic brand configuration from environment (for API triggers)
+  brandUrl: process.env.BRAND_URL,
+  brandName: process.env.BRAND_NAME,
+  accountName: process.env.ACCOUNT_NAME,
   headless: process.env.HEADLESS === 'true',
   timeout: parseInt(process.env.TIMEOUT_MS || '180000', 10),
   sellerCentralUrl: 'https://sellercentral.amazon.com/home',
@@ -294,42 +298,72 @@ async function main() {
       process.exit(1);
     }
 
-    // Navigate to brand URLs
-    const brandsLoaded = [];
-    const brandsFailed = [];
+    // Check if we're in API mode (specific brand requested)
+    const isApiMode = CONFIG.brandUrl && CONFIG.brandName;
 
-    for (const [brandName, brandUrl] of Object.entries(CONFIG.brands)) {
-      const result = await navigateBrand(page, brandName, brandUrl);
-      if (result.success) {
-        brandsLoaded.push(brandName);
-      } else {
-        brandsFailed.push(brandName);
+    if (isApiMode) {
+      // API Mode: Navigate to specific brand
+      console.log(`\n🎯 API Mode: Navigating to ${CONFIG.brandName}...`);
+      const result = await navigateBrand(page, CONFIG.brandName, CONFIG.brandUrl);
+      
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      const successResult = {
+        success: result.success,
+        message: `Login completed for ${CONFIG.accountName} - ${CONFIG.brandName}`,
+        accountName: CONFIG.accountName,
+        brandName: CONFIG.brandName,
+        duration: `${duration}s`,
+      };
+
+      console.log('\n✅ ========== SUCCESS ==========');
+      console.log(JSON.stringify(successResult, null, 2));
+      console.log('================================\n');
+      console.log('🔍 Browser will remain open. You are now on the Seller Central homepage.');
+      console.log('📌 Press Ctrl+C to close the browser when done.');
+
+      // Keep browser open indefinitely
+      clearTimeout(timeoutId);
+      await new Promise(() => {}); // Keep alive forever
+      
+    } else {
+      // Standard Mode: Navigate to all brands
+      console.log('\n🔄 Standard Mode: Navigating to all brands...');
+      const brandsLoaded = [];
+      const brandsFailed = [];
+
+      for (const [brandName, brandUrl] of Object.entries(CONFIG.brands)) {
+        const result = await navigateBrand(page, brandName, brandUrl);
+        if (result.success) {
+          brandsLoaded.push(brandName);
+        } else {
+          brandsFailed.push(brandName);
+        }
       }
+
+      // Success summary
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      const successResult = {
+        success: true,
+        message: 'Login and brand navigation completed',
+        brandsLoaded,
+        brandsFailed: brandsFailed.length > 0 ? brandsFailed : undefined,
+        duration: `${duration}s`,
+      };
+
+      console.log('\n✅ ========== SUCCESS ==========');
+      console.log(JSON.stringify(successResult, null, 2));
+      console.log('================================\n');
+
+      // Keep browser open for debugging if not headless
+      if (!CONFIG.headless) {
+        console.log('🔍 Browser will remain open for debugging. Press Ctrl+C to close.');
+        await new Promise(() => {}); // Keep alive
+      }
+
+      clearTimeout(timeoutId);
+      await browser.close();
+      process.exit(0);
     }
-
-    // Success summary
-    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-    const successResult = {
-      success: true,
-      message: 'Login and brand navigation completed',
-      brandsLoaded,
-      brandsFailed: brandsFailed.length > 0 ? brandsFailed : undefined,
-      duration: `${duration}s`,
-    };
-
-    console.log('\n✅ ========== SUCCESS ==========');
-    console.log(JSON.stringify(successResult, null, 2));
-    console.log('================================\n');
-
-    // Keep browser open for debugging if not headless
-    if (!CONFIG.headless) {
-      console.log('🔍 Browser will remain open for debugging. Press Ctrl+C to close.');
-      await new Promise(() => {}); // Keep alive
-    }
-
-    clearTimeout(timeoutId);
-    await browser.close();
-    process.exit(0);
 
   } catch (error) {
     clearTimeout(timeoutId);

@@ -76,6 +76,11 @@ export function AppLayout({ children }: AppLayoutProps) {
           title: "Analytics",
           description: "Insights and performance metrics for your cases"
         };
+      case "/users":
+        return {
+          title: "User Management",
+          description: "Manage user accounts and permissions"
+        };
       default:
         return { title: undefined, description: undefined };
     }

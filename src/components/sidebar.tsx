@@ -11,6 +11,7 @@ import {
   FileText,
   BarChart3,
   User,
+  Users,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -36,6 +37,11 @@ const navigation = [
     name: "Brands & Accounts",
     href: "/accounts",
     icon: User,
+  },
+  {
+    name: "User Management",
+    href: "/users",
+    icon: Users,
   },
   // {
   //   name: "Analytics",
