@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Trash2, Loader2, User, Calendar, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Pencil } from "lucide-react";
+import { Trash2, Loader2, User, Calendar, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Pencil, Store } from "lucide-react";
 import { EditAccountModal } from "@/components/edit-account-modal";
 import { DeleteAccountModal } from "@/components/delete-account-modal";
 import { AlertModal } from "@/components/alert-modal";
@@ -155,96 +155,111 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
 
   if (accounts.length === 0) {
     return (
-      <div className="text-center py-12 bg-card border rounded-lg">
-        <User className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-semibold mb-2">No accounts yet</h3>
-        <p className="text-muted-foreground mb-4">
-          Add your first Seller Central account to get started.
-        </p>
+      <div className="relative text-center py-16 bg-gradient-to-br from-card via-card to-primary/5 border rounded-xl overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-transparent opacity-50" />
+        <div className="relative">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 mb-4">
+            <Store className="h-10 w-10 text-primary" />
+          </div>
+          <h3 className="text-xl font-bold mb-2">No accounts yet</h3>
+          <p className="text-muted-foreground mb-4 max-w-sm mx-auto">
+            Add your first Seller Central account to get started with monitoring.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-card border rounded-lg overflow-hidden">
+    <div className="bg-gradient-to-br from-card via-card to-primary/[0.02] border rounded-xl overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-muted/50 border-b">
+          <thead className="bg-gradient-to-r from-muted/50 via-muted/40 to-muted/50 border-b border-border/50">
             <tr>
               <th 
-                className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/70 transition-colors"
+                className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                 onClick={() => handleSort('accountName')}
               >
-                Account Name
-                <SortIcon field="accountName" />
+                <div className="flex items-center gap-1">
+                  <span>Account Name</span>
+                  <SortIcon field="accountName" />
+                </div>
               </th>
               <th 
-                className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/70 transition-colors"
+                className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                 onClick={() => handleSort('username')}
               >
-                Username
-                <SortIcon field="username" />
+                <div className="flex items-center gap-1">
+                  <span>Username</span>
+                  <SortIcon field="username" />
+                </div>
               </th>
-              <th className="px-4 py-2 text-left text-sm font-medium">
+              <th className="px-4 py-3 text-left text-sm font-semibold">
                 Password
               </th>
-              <th className="px-4 py-2 text-left text-sm font-medium">
+              <th className="px-4 py-3 text-left text-sm font-semibold">
                 2FA Key
               </th>
               <th 
-                className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/70 transition-colors"
+                className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                 onClick={() => handleSort('createdAt')}
               >
-                Created At
-                <SortIcon field="createdAt" />
+                <div className="flex items-center gap-1">
+                  <span>Created At</span>
+                  <SortIcon field="createdAt" />
+                </div>
               </th>
-              <th className="px-4 py-2 text-left text-sm font-medium">
+              <th className="px-4 py-3 text-left text-sm font-semibold">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y">
-            {paginatedAccounts.map((account) => (
+          <tbody className="divide-y divide-border/50">
+            {paginatedAccounts.map((account, index) => (
               <tr
                 key={account._id}
-                className="hover:bg-muted/50 transition-colors"
+                className="group hover:bg-gradient-to-r hover:from-primary/[0.02] hover:via-primary/[0.03] hover:to-transparent transition-all duration-200"
+                style={{
+                  animation: `fadeIn 0.3s ease-in-out ${index * 0.05}s both`
+                }}
               >
-                <td className="px-4 py-2">
+                <td className="px-4 py-3">
                   <div className="flex items-center space-x-3">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <User className="h-4 w-4 text-primary" />
+                    <div className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500/10 to-orange-500/5 flex items-center justify-center group-hover:shadow-md group-hover:scale-105 transition-all duration-200">
+                      <Store className="h-5 w-5 text-orange-600" />
+                      <div className="absolute inset-0 rounded-xl bg-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{account.accountName}</p>
+                      <p className="font-semibold text-sm text-foreground">{account.accountName}</p>
+                      <p className="text-xs text-muted-foreground">Amazon Seller</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-2">
-                  <p className="text-sm">{account.username}</p>
+                <td className="px-4 py-3">
+                  <p className="text-sm font-medium">{account.username}</p>
                 </td>
-                <td className="px-4 py-2">
-                  <span className="text-sm text-muted-foreground">
-                    ••••••••
-                  </span>
+                <td className="px-4 py-3">
+                  <span className="text-sm font-mono text-muted-foreground">••••••••</span>
                 </td>
-                <td className="px-4 py-2">
-                  <span className="text-sm text-muted-foreground">
-                    ••••••••
-                  </span>
+                <td className="px-4 py-3">
+                  <span className="text-sm font-mono text-muted-foreground">••••••••</span>
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-3">
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
+                    <div className="p-1.5 rounded-lg bg-muted/30">
+                      <Calendar className="h-3.5 w-3.5" />
+                    </div>
                     <span>{formatDate(account.createdAt)}</span>
                   </div>
                 </td>
-                <td className="px-4 py-2">
-                  <div className="flex items-center gap-2">
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-1">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEdit(account)}
-                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50/80 hover:scale-110 transition-all duration-200 rounded-lg"
+                      title="Edit account"
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
@@ -252,7 +267,8 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteClick(account)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50/80 hover:scale-110 transition-all duration-200 rounded-lg"
+                      title="Delete account"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -265,7 +281,7 @@ export function AccountsTable({ accounts, onAccountDeleted }: AccountsTableProps
       </div>
       
       {/* Pagination Controls */}
-      <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/20">
+      <div className="flex items-center justify-between px-4 py-4 border-t border-border/50 bg-gradient-to-r from-muted/10 via-transparent to-muted/10">
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">
             Showing {(currentPage - 1) * pageSize + 1} to{" "}

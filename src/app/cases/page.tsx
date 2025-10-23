@@ -15,7 +15,14 @@ import {
   AlertTriangle,
   RefreshCw,
   MoreVertical,
-  ExternalLink
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from "lucide-react";
 
 // Mock case data
@@ -92,6 +99,9 @@ interface Brand {
   brandUrl: string;
 }
 
+type SortField = 'id' | 'title' | 'status' | 'priority' | 'updatedAt';
+type SortOrder = 'asc' | 'desc';
+
 export default function CasesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -102,6 +112,12 @@ export default function CasesPage() {
   const [selectedAccount, setSelectedAccount] = useState<string>("all");
   const [selectedBrand, setSelectedBrand] = useState<string>("all");
   const [isRequestingCases, setIsRequestingCases] = useState(false);
+  
+  // Pagination & Sorting states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [sortField, setSortField] = useState<SortField>('updatedAt');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
   // Alert modal state
   const [alertModal, setAlertModal] = useState({
@@ -186,6 +202,27 @@ export default function CasesPage() {
     return `${diffDays}d ago`;
   };
 
+  // Handle sorting
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+    setCurrentPage(1); // Reset to first page when sorting
+  };
+
+  // Sort icon component
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-4 w-4 inline-block ml-1" />;
+    }
+    return sortOrder === 'asc' 
+      ? <ArrowUp className="h-4 w-4 inline-block ml-1" /> 
+      : <ArrowDown className="h-4 w-4 inline-block ml-1" />;
+  };
+
   const filteredCases = mockCases.filter(caseItem => {
     const matchesSearch = caseItem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           caseItem.id.toLowerCase().includes(searchTerm.toLowerCase());
@@ -193,6 +230,43 @@ export default function CasesPage() {
     const matchesPriority = priorityFilter === "all" || caseItem.priority === priorityFilter;
     return matchesSearch && matchesStatus && matchesPriority;
   });
+
+  // Sort cases
+  const sortedCases = [...filteredCases].sort((a, b) => {
+    let comparison = 0;
+    
+    switch (sortField) {
+      case 'id':
+        comparison = a.id.localeCompare(b.id);
+        break;
+      case 'title':
+        comparison = a.title.localeCompare(b.title);
+        break;
+      case 'status':
+        comparison = a.status.localeCompare(b.status);
+        break;
+      case 'priority':
+        const priorityOrder = { urgent: 0, high: 1, medium: 2, low: 3 };
+        comparison = priorityOrder[a.priority as keyof typeof priorityOrder] - priorityOrder[b.priority as keyof typeof priorityOrder];
+        break;
+      case 'updatedAt':
+        comparison = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+        break;
+    }
+    
+    return sortOrder === 'asc' ? comparison : -comparison;
+  });
+
+  // Pagination
+  const totalPages = Math.ceil(sortedCases.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedCases = sortedCases.slice(startIndex, endIndex);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, priorityFilter]);
 
   useEffect(() => {
     setIsClient(true);
@@ -432,53 +506,126 @@ export default function CasesPage() {
       </div>
 
       {/* Cases Table */}
-      <div className="bg-card border rounded-lg overflow-hidden">
+      <div className="bg-gradient-to-br from-card via-card to-primary/[0.02] border rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-muted/50 border-b">
+            <thead className="bg-gradient-to-r from-muted/50 via-muted/40 to-muted/50 border-b border-border/50">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium">Case ID</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Title</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Workspace</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Priority</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Updated</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>
+                <th 
+                  className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  onClick={() => handleSort('id')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Case ID</span>
+                    <SortIcon field="id" />
+                  </div>
+                </th>
+                <th 
+                  className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  onClick={() => handleSort('title')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Title</span>
+                    <SortIcon field="title" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Workspace</th>
+                <th 
+                  className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  onClick={() => handleSort('status')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Status</span>
+                    <SortIcon field="status" />
+                  </div>
+                </th>
+                <th 
+                  className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  onClick={() => handleSort('priority')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Priority</span>
+                    <SortIcon field="priority" />
+                  </div>
+                </th>
+                <th 
+                  className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  onClick={() => handleSort('updatedAt')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Updated</span>
+                    <SortIcon field="updatedAt" />
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
-              {filteredCases.map((caseItem) => (
-                <tr key={caseItem.id} className="hover:bg-muted/50 transition-colors cursor-pointer">
+            <tbody className="divide-y divide-border/50">
+              {paginatedCases.map((caseItem, index) => (
+                <tr 
+                  key={caseItem.id} 
+                  className="group hover:bg-gradient-to-r hover:from-primary/[0.02] hover:via-primary/[0.03] hover:to-transparent transition-all duration-200"
+                  style={{
+                    animation: `fadeIn 0.3s ease-in-out ${index * 0.05}s both`
+                  }}
+                >
                   <td className="px-4 py-3">
                     <div className="flex items-center space-x-2">
+                      <div className="p-1.5 rounded-lg bg-muted/30 group-hover:bg-muted/50 transition-colors">
                       {getStatusIcon(caseItem.status)}
-                      <span className="font-mono text-sm font-medium">{caseItem.id}</span>
+                      </div>
+                      <span className="font-mono text-sm font-semibold">{caseItem.id}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <p className="font-medium">{caseItem.title}</p>
-                    <p className="text-sm text-muted-foreground">{caseItem.category}</p>
+                    <div>
+                      <p className="font-semibold text-sm text-foreground mb-0.5">{caseItem.title}</p>
+                      <div className="flex items-center gap-1.5">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-medium">
+                          {caseItem.category}
+                        </span>
+                      </div>
+                    </div>
                   </td>
-                  <td className="px-4 py-3 text-sm">{caseItem.workspace}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full border ${getStatusColor(caseItem.status)}`}>
+                    <span className="text-sm font-medium">{caseItem.workspace}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border shadow-sm ${getStatusColor(caseItem.status)}`}>
+                      <div className="w-1.5 h-1.5 rounded-full bg-current" />
                       {caseItem.status.replace("_", " ")}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full border ${getPriorityColor(caseItem.priority)}`}>
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border shadow-sm ${getPriorityColor(caseItem.priority)}`}>
+                      <AlertTriangle className="h-3 w-3" />
                       {caseItem.priority}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">
-                    {formatDate(caseItem.updatedAt)}
+                  <td className="px-4 py-3">
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                      <div className="p-1.5 rounded-lg bg-muted/30">
+                        <Clock className="h-3.5 w-3.5" />
+                      </div>
+                      <span>{formatDate(caseItem.updatedAt)}</span>
+                    </div>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center space-x-1">
-                      <Button variant="ghost" size="sm">
+                    <div className="flex items-center gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="h-8 w-8 p-0 text-primary hover:text-primary hover:bg-primary/10 hover:scale-110 transition-all duration-200 rounded-lg"
+                        title="View details"
+                      >
                         <ExternalLink className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground hover:bg-muted hover:scale-110 transition-all duration-200 rounded-lg"
+                        title="More options"
+                      >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </div>
@@ -488,23 +635,92 @@ export default function CasesPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        <div className="flex items-center justify-between px-4 py-4 border-t border-border/50 bg-gradient-to-r from-muted/10 via-transparent to-muted/10">
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <span>Show</span>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="px-2 py-1 border rounded-md bg-background cursor-pointer"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+            <span>
+              Showing {startIndex + 1} to {Math.min(endIndex, sortedCases.length)} of {sortedCases.length} cases
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Empty State */}
-      {filteredCases.length === 0 && (
-        <div className="text-center py-12 bg-card border rounded-lg">
-          <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No cases found</h3>
-          <p className="text-muted-foreground mb-4">
+      {sortedCases.length === 0 && (
+        <div className="relative text-center py-16 bg-gradient-to-br from-card via-card to-primary/5 border rounded-xl overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-transparent opacity-50" />
+          <div className="relative">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 mb-4">
+              <FileText className="h-10 w-10 text-primary" />
+            </div>
+            <h3 className="text-xl font-bold mb-2">No cases found</h3>
+            <p className="text-muted-foreground mb-4 max-w-sm mx-auto">
             No cases match your current search or filter criteria.
           </p>
-          <Button onClick={() => {
+            <Button 
+              onClick={() => {
             setSearchTerm("");
             setStatusFilter("all");
             setPriorityFilter("all");
-          }}>
+              }}
+              className="shadow-md hover:shadow-lg transition-shadow"
+            >
             Clear Filters
           </Button>
+          </div>
         </div>
       )}
 

@@ -105,7 +105,7 @@ export function AddAccountModal({
               <Input
                 id="accountName"
                 name="accountName"
-                placeholder="e.g., REFRIGIWEAR US"
+                placeholder="CHANNEL PRECISION"
                 value={formData.accountName}
                 onChange={handleChange}
                 required

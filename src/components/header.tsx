@@ -52,18 +52,21 @@ export function Header({ isCollapsed, onMenuClick, title, description }: HeaderP
   return (
     <header
       className={cn(
-        "fixed top-0 right-0 z-30 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 transition-all duration-300 shadow-sm",
+        "fixed top-0 right-0 z-30 border-b border-border/50 bg-gradient-to-r from-white via-white to-primary/[0.02] backdrop-blur-md supports-[backdrop-filter]:bg-white/95 transition-all duration-300 shadow-md",
         isCollapsed ? "left-20" : "left-64",
         title ? "h-16 lg:h-24" : "h-16"
       )}
     >
-      <div className="flex h-full items-center justify-between px-4 sm:px-6">
+      {/* Decorative gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.02] to-transparent pointer-events-none" />
+      
+      <div className="relative flex h-full items-center justify-between px-4 sm:px-6">
         {/* Left side - Mobile Menu Button and Page Title */}
         <div className="flex items-center space-x-3 flex-1 min-w-0">
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden flex-shrink-0"
+            className="lg:hidden flex-shrink-0 hover:bg-primary/5"
             onClick={onMenuClick}
           >
             <Menu className="h-5 w-5" />
@@ -74,14 +77,14 @@ export function Header({ isCollapsed, onMenuClick, title, description }: HeaderP
             <div className="min-w-0 flex-1">
               {/* Desktop View */}
               <div className="hidden lg:block">
-                <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+                <h1 className="text-2xl font-bold text-foreground tracking-tight">{title}</h1>
                 {description && (
                   <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
                 )}
               </div>
               {/* Mobile View */}
               <div className="lg:hidden">
-                <h1 className="text-lg font-bold text-foreground truncate">{title}</h1>
+                <h1 className="text-lg font-bold text-foreground truncate tracking-tight">{title}</h1>
               </div>
             </div>
           )}
@@ -90,25 +93,33 @@ export function Header({ isCollapsed, onMenuClick, title, description }: HeaderP
         {/* Right side actions */}
         <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
           {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="relative hover:bg-primary/5 transition-colors"
+          >
             <Bell className="h-5 w-5" />
-            <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full animate-pulse" />
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full animate-pulse shadow-sm shadow-red-500/50" />
             <span className="sr-only">Notifications</span>
           </Button>
 
           {/* User Menu Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-full">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative h-10 w-10 rounded-full hover:bg-primary/5 transition-colors"
+              >
                 {user?.avatar ? (
-                  <Avatar className="h-9 w-9">
+                  <Avatar className="h-9 w-9 ring-2 ring-primary/10 hover:ring-primary/20 transition-all">
                     <AvatarImage src={user.avatar} alt="User avatar" />
-                    <AvatarFallback className="bg-primary/10 text-primary">
+                    <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                       {getInitials()}
                     </AvatarFallback>
                   </Avatar>
                 ) : (
-                  <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-primary/10 hover:ring-primary/20 transition-all">
                     <User className="h-5 w-5 text-primary" />
                   </div>
                 )}
@@ -129,12 +140,12 @@ export function Header({ isCollapsed, onMenuClick, title, description }: HeaderP
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleProfile}>
+              <DropdownMenuItem onClick={handleProfile} className="cursor-pointer">
                 <UserCircle className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600">
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 cursor-pointer">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Logout</span>
               </DropdownMenuItem>
@@ -142,6 +153,9 @@ export function Header({ isCollapsed, onMenuClick, title, description }: HeaderP
           </DropdownMenu>
         </div>
       </div>
+
+      {/* Bottom gradient accent */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
     </header>
   );
 }

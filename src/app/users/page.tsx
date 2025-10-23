@@ -21,7 +21,8 @@ import {
   ArrowDown,
   Calendar,
   Mail,
-  Phone
+  Phone,
+  Loader2
 } from "lucide-react";
 import { AddUserModal } from "@/components/add-user-modal";
 import { EditUserModal } from "@/components/edit-user-modal";
@@ -260,77 +261,98 @@ export default function UsersPage() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-card border rounded-lg overflow-hidden">
+      <div className="bg-gradient-to-br from-card via-card to-primary/[0.02] border rounded-xl overflow-hidden shadow-sm">
         {isLoading ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading users...</p>
+          <div className="text-center py-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 mb-4">
+              <Loader2 className="h-8 w-8 text-primary animate-spin" />
+            </div>
+            <p className="text-muted-foreground font-medium">Loading users...</p>
           </div>
         ) : filteredUsers.length === 0 ? (
-          <div className="text-center py-12">
-            <UsersIcon className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No users found</h3>
-            <p className="text-muted-foreground mb-4">
-              {searchTerm || roleFilter !== "all"
-                ? "No users match your search criteria."
-                : "Get started by creating your first user."}
-            </p>
-            {(!searchTerm && roleFilter === "all") && (
-              <Button onClick={() => setIsAddModalOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add User
-              </Button>
-            )}
+          <div className="relative text-center py-16 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-transparent opacity-50" />
+            <div className="relative">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 mb-4">
+                <UsersIcon className="h-10 w-10 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">No users found</h3>
+              <p className="text-muted-foreground mb-4 max-w-sm mx-auto">
+                {searchTerm || roleFilter !== "all"
+                  ? "No users match your search criteria."
+                  : "Get started by creating your first user."}
+              </p>
+              {(!searchTerm && roleFilter === "all") && (
+                <Button 
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="shadow-md hover:shadow-lg transition-shadow"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add User
+                </Button>
+              )}
+            </div>
           </div>
         ) : (
           <>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-muted/50 border-b">
+                <thead className="bg-gradient-to-r from-muted/50 via-muted/40 to-muted/50 border-b border-border/50">
                   <tr>
-                    <th className="px-4 py-2 text-left text-sm font-medium">
+                    <th className="px-4 py-3 text-left text-sm font-semibold">
                       User
                     </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium">
+                    <th className="px-4 py-3 text-left text-sm font-semibold">
                       Contact
                     </th>
                     <th 
-                      className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/70 transition-colors"
+                      className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                       onClick={() => handleSort('role')}
                     >
-                      Role
-                      <SortIcon field="role" />
+                      <div className="flex items-center gap-1">
+                        <span>Role</span>
+                        <SortIcon field="role" />
+                      </div>
                     </th>
                     <th 
-                      className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/70 transition-colors"
+                      className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                       onClick={() => handleSort('createdAt')}
                     >
-                      Created At
-                      <SortIcon field="createdAt" />
+                      <div className="flex items-center gap-1">
+                        <span>Created At</span>
+                        <SortIcon field="createdAt" />
+                      </div>
                     </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium">Actions</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
-                  {paginatedUsers.map((user) => (
-                    <tr key={user._id} className="hover:bg-muted/50 transition-colors">
-                      <td className="px-4 py-2">
+                <tbody className="divide-y divide-border/50">
+                  {paginatedUsers.map((user, index) => (
+                    <tr 
+                      key={user._id} 
+                      className="group hover:bg-gradient-to-r hover:from-primary/[0.02] hover:via-primary/[0.03] hover:to-transparent transition-all duration-200"
+                      style={{
+                        animation: `fadeIn 0.3s ease-in-out ${index * 0.05}s both`
+                      }}
+                    >
+                      <td className="px-4 py-3">
                         <div className="flex items-center space-x-3">
                           {user.avatar ? (
-                            <Avatar className="h-10 w-10">
+                            <Avatar className="h-11 w-11 ring-2 ring-primary/10 group-hover:ring-primary/20 transition-all">
                               <AvatarImage src={user.avatar} alt={user.email} />
-                              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                              <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/5 text-primary text-sm font-semibold">
                                 {user.firstName && user.lastName
                                   ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
                                   : user.email?.substring(0, 2).toUpperCase() || "U"}
                               </AvatarFallback>
                             </Avatar>
                           ) : (
-                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <div className="h-11 w-11 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center ring-2 ring-primary/10 group-hover:ring-primary/20 transition-all">
                               <UserIcon className="h-5 w-5 text-primary" />
                             </div>
                           )}
                           <div>
-                            <p className="font-medium text-sm">
+                            <p className="font-semibold text-sm text-foreground">
                               {user.firstName && user.lastName 
                                 ? `${user.firstName} ${user.lastName}`
                                 : user.firstName || user.lastName || user.email}
@@ -341,21 +363,19 @@ export default function UsersPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-2">
-                        <div className="space-y-1">
-                          {user.phone ? (
-                            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                              <Phone className="h-3 w-3" />
-                              <span>{user.phone}</span>
-                            </div>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
-                          )}
-                        </div>
+                      <td className="px-4 py-3">
+                        {user.phone ? (
+                          <div className="flex items-center gap-2">
+                            <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="text-sm font-medium">{user.phone}</span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">—</span>
+                        )}
                       </td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-3">
                         <span
-                          className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full border ${getRoleBadgeClass(
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border shadow-sm ${getRoleBadgeClass(
                             user.role
                           )}`}
                         >
@@ -363,19 +383,22 @@ export default function UsersPage() {
                           <span className="capitalize">{user.role}</span>
                         </span>
                       </td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-3">
                         <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                          <Calendar className="h-4 w-4" />
+                          <div className="p-1.5 rounded-lg bg-muted/30">
+                            <Calendar className="h-3.5 w-3.5" />
+                          </div>
                           <span>{formatDate(user.createdAt)}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-2">
-                        <div className="flex items-center gap-2">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEditUser(user)}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50/80 hover:scale-110 transition-all duration-200 rounded-lg"
+                            title="Edit user"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -386,8 +409,8 @@ export default function UsersPage() {
                             disabled={currentUser?._id === user._id}
                             className={
                               currentUser?._id === user._id
-                                ? "text-gray-400 cursor-not-allowed"
-                                : "text-red-600 hover:text-red-700 hover:bg-red-50"
+                                ? "h-8 w-8 p-0 text-gray-400 cursor-not-allowed rounded-lg"
+                                : "h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50/80 hover:scale-110 transition-all duration-200 rounded-lg"
                             }
                             title={currentUser?._id === user._id ? "You cannot delete your own account" : "Delete user"}
                           >
@@ -402,7 +425,7 @@ export default function UsersPage() {
             </div>
 
             {/* Pagination Controls */}
-            <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/20">
+            <div className="flex items-center justify-between px-4 py-4 border-t border-border/50 bg-gradient-to-r from-muted/10 via-transparent to-muted/10">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">
                   Showing {sortedUsers.length === 0 ? 0 : (currentPage - 1) * pageSize + 1} to{" "}
