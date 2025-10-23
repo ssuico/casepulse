@@ -2,9 +2,13 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
 export interface IUser extends mongoose.Document {
-  username: string;
+  email: string;
   password: string;
   role: "manager" | "user";
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  avatar?: string;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -12,13 +16,13 @@ export interface IUser extends mongoose.Document {
 
 const UserSchema = new mongoose.Schema<IUser>(
   {
-    username: {
+    email: {
       type: String,
-      required: [true, "Username is required"],
+      required: [true, "Email is required"],
       unique: true,
       trim: true,
-      minlength: [3, "Username must be at least 3 characters"],
-      maxlength: [50, "Username cannot exceed 50 characters"],
+      lowercase: true,
+      match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
     },
     password: {
       type: String,
@@ -31,6 +35,21 @@ const UserSchema = new mongoose.Schema<IUser>(
       enum: ["manager", "user"],
       default: "user",
       required: [true, "Role is required"],
+    },
+    firstName: {
+      type: String,
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+    },
+    phone: {
+      type: String,
+      trim: true,
+    },
+    avatar: {
+      type: String,
     },
   },
   {

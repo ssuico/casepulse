@@ -43,9 +43,9 @@ export async function PUT(
     await connectDB();
     
     const body = await request.json();
-    const { password, role } = body;
+    const { password, role, firstName, lastName, phone } = body;
 
-    // Build update object (username cannot be updated)
+    // Build update object (email cannot be updated)
     const updateData: any = {};
     
     if (password !== undefined) {
@@ -69,6 +69,11 @@ export async function PUT(
       }
       updateData.role = role;
     }
+
+    // Add optional personal information fields
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+    if (phone !== undefined) updateData.phone = phone;
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(

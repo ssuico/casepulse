@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AlertModal } from "@/components/alert-modal";
 import { 
   Search,
   Filter,
@@ -101,6 +102,26 @@ export default function CasesPage() {
   const [selectedAccount, setSelectedAccount] = useState<string>("all");
   const [selectedBrand, setSelectedBrand] = useState<string>("all");
   const [isRequestingCases, setIsRequestingCases] = useState(false);
+
+  // Alert modal state
+  const [alertModal, setAlertModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info" as "success" | "error" | "warning" | "info",
+  });
+
+  const showAlert = (
+    title: string,
+    message: string,
+    type: "success" | "error" | "warning" | "info" = "info"
+  ) => {
+    setAlertModal({ isOpen: true, title, message, type });
+  };
+
+  const closeAlert = () => {
+    setAlertModal({ ...alertModal, isOpen: false });
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -238,13 +259,25 @@ export default function CasesPage() {
       const data = await response.json();
 
       if (data.success) {
-        alert(`✅ Scraper started for ${data.data.brandName}!\nCheck the browser window.`);
+        showAlert(
+          "Scraper Started",
+          `Scraper started for ${data.data.brandName}!\nCheck the browser window.`,
+          "success"
+        );
       } else {
-        alert(`❌ Failed to start scraper: ${data.message}`);
+        showAlert(
+          "Scraper Failed",
+          `Failed to start scraper: ${data.message}`,
+          "error"
+        );
       }
     } catch (error) {
       console.error("Failed to request cases:", error);
-      alert("❌ Failed to start scraper. Please try again.");
+      showAlert(
+        "Error",
+        "Failed to start scraper. Please try again.",
+        "error"
+      );
     } finally {
       setIsRequestingCases(false);
     }
@@ -474,6 +507,15 @@ export default function CasesPage() {
           </Button>
         </div>
       )}
+
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={closeAlert}
+        title={alertModal.title}
+        message={alertModal.message}
+        type={alertModal.type}
+      />
     </div>
   );
 }

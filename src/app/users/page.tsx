@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   Search,
   Plus,
@@ -18,24 +19,32 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  Calendar
+  Calendar,
+  Mail,
+  Phone
 } from "lucide-react";
 import { AddUserModal } from "@/components/add-user-modal";
 import { EditUserModal } from "@/components/edit-user-modal";
 import { DeleteUserModal } from "@/components/delete-user-modal";
+import { useUser } from "@/contexts/user-context";
 
 interface User {
   _id: string;
-  username: string;
+  email: string;
   role: "user" | "manager";
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  avatar?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-type SortField = 'username' | 'role' | 'createdAt';
+type SortField = 'email' | 'role' | 'createdAt';
 type SortOrder = 'asc' | 'desc';
 
 export default function UsersPage() {
+  const { user: currentUser } = useUser();
   const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
@@ -133,7 +142,11 @@ export default function UsersPage() {
   // Filter users
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
-      const matchesSearch = user.username.toLowerCase().includes(searchTerm.toLowerCase());
+      const searchStr = searchTerm.toLowerCase();
+      const matchesSearch = 
+        user.email.toLowerCase().includes(searchStr) ||
+        (user.firstName && user.firstName.toLowerCase().includes(searchStr)) ||
+        (user.lastName && user.lastName.toLowerCase().includes(searchStr));
       const matchesRole = roleFilter === "all" || user.role === roleFilter;
       return matchesSearch && matchesRole;
     });
@@ -227,7 +240,7 @@ export default function UsersPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by username..."
+              placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 cursor-text"
@@ -274,12 +287,11 @@ export default function UsersPage() {
               <table className="w-full">
                 <thead className="bg-muted/50 border-b">
                   <tr>
-                    <th 
-                      className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/70 transition-colors"
-                      onClick={() => handleSort('username')}
-                    >
-                      Username
-                      <SortIcon field="username" />
+                    <th className="px-4 py-2 text-left text-sm font-medium">
+                      User
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-medium">
+                      Contact
                     </th>
                     <th 
                       className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/70 transition-colors"
@@ -303,10 +315,42 @@ export default function UsersPage() {
                     <tr key={user._id} className="hover:bg-muted/50 transition-colors">
                       <td className="px-4 py-2">
                         <div className="flex items-center space-x-3">
-                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <UserIcon className="h-4 w-4 text-primary" />
+                          {user.avatar ? (
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage src={user.avatar} alt={user.email} />
+                              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                                {user.firstName && user.lastName
+                                  ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+                                  : user.email?.substring(0, 2).toUpperCase() || "U"}
+                              </AvatarFallback>
+                            </Avatar>
+                          ) : (
+                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                              <UserIcon className="h-5 w-5 text-primary" />
+                            </div>
+                          )}
+                          <div>
+                            <p className="font-medium text-sm">
+                              {user.firstName && user.lastName 
+                                ? `${user.firstName} ${user.lastName}`
+                                : user.firstName || user.lastName || user.email}
+                            </p>
+                            {(user.firstName || user.lastName) && (
+                              <p className="text-xs text-muted-foreground">{user.email}</p>
+                            )}
                           </div>
-                          <span className="font-medium text-sm">{user.username}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-2">
+                        <div className="space-y-1">
+                          {user.phone ? (
+                            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                              <Phone className="h-3 w-3" />
+                              <span>{user.phone}</span>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">—</span>
+                          )}
                         </div>
                       </td>
                       <td className="px-4 py-2">
@@ -339,7 +383,13 @@ export default function UsersPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteUser(user)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            disabled={currentUser?._id === user._id}
+                            className={
+                              currentUser?._id === user._id
+                                ? "text-gray-400 cursor-not-allowed"
+                                : "text-red-600 hover:text-red-700 hover:bg-red-50"
+                            }
+                            title={currentUser?._id === user._id ? "You cannot delete your own account" : "Delete user"}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

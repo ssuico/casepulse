@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2, Loader2, Tag, Calendar, ExternalLink, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Pencil } from "lucide-react";
 import { EditBrandModal } from "@/components/edit-brand-modal";
 import { DeleteBrandModal } from "@/components/delete-brand-modal";
+import { AlertModal } from "@/components/alert-modal";
 
 interface Brand {
   _id: string;
@@ -43,6 +44,26 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
   const [deletingBrand, setDeletingBrand] = useState<Brand | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  // Alert modal state
+  const [alertModal, setAlertModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info" as "success" | "error" | "warning" | "info",
+  });
+
+  const showAlert = (
+    title: string,
+    message: string,
+    type: "success" | "error" | "warning" | "info" = "info"
+  ) => {
+    setAlertModal({ isOpen: true, title, message, type });
+  };
+
+  const closeAlert = () => {
+    setAlertModal({ ...alertModal, isOpen: false });
+  };
+
   const handleEdit = (brand: Brand) => {
     setEditingBrand(brand);
     setIsEditModalOpen(true);
@@ -69,7 +90,11 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
       setIsDeleteModalOpen(false);
       onBrandDeleted();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Failed to delete brand");
+      showAlert(
+        "Delete Failed",
+        err instanceof Error ? err.message : "Failed to delete brand",
+        "error"
+      );
     } finally {
       setDeletingId(null);
     }
@@ -331,6 +356,15 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
         brand={deletingBrand}
         onConfirmDelete={handleConfirmDelete}
         isDeleting={deletingId === deletingBrand?._id}
+      />
+
+      {/* Alert Modal */}
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={closeAlert}
+        title={alertModal.title}
+        message={alertModal.message}
+        type={alertModal.type}
       />
     </div>
   );

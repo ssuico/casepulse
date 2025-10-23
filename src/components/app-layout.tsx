@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
@@ -9,6 +9,7 @@ import { MobileSidebar } from "@/components/mobile-sidebar";
 import { Button } from "@/components/ui/button";
 import { Activity, Bell, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useUser } from "@/contexts/user-context";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -25,6 +26,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, isLoading } = useUser();
 
   // Load sidebar state from localStorage
   useEffect(() => {
@@ -41,6 +44,24 @@ export function AppLayout({ children }: AppLayoutProps) {
       localStorage.setItem("sidebar-collapsed", String(isCollapsed));
     }
   }, [isCollapsed, isLoaded]);
+
+  // Protect routes - redirect to login if not authenticated
+  useEffect(() => {
+    const isPublicPage = STANDALONE_PAGES.includes(pathname);
+    
+    // Don't check authentication while loading
+    if (isLoading) return;
+
+    // If not on a public page and user is not logged in, redirect to login
+    if (!isPublicPage && !user) {
+      router.push("/login");
+    }
+
+    // If on login page and user is already logged in, redirect to cases
+    if (pathname === "/login" && user) {
+      router.push("/cases");
+    }
+  }, [pathname, user, isLoading, router]);
 
   // Check if current page should be standalone
   const isStandalone = STANDALONE_PAGES.includes(pathname);
@@ -81,12 +102,29 @@ export function AppLayout({ children }: AppLayoutProps) {
           title: "User Management",
           description: "Manage user accounts and permissions"
         };
+      case "/profile":
+        return {
+          title: "Profile Settings",
+          description: "Manage your account settings and preferences"
+        };
       default:
         return { title: undefined, description: undefined };
     }
   };
 
   const { title, description } = getPageMetadata();
+
+  // Show loading spinner while checking authentication
+  if (isLoading && !isStandalone) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Render standalone pages without sidebar/header
   if (isStandalone) {
@@ -167,7 +205,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         className={cn(
           "transition-all duration-300 min-h-screen",
           title ? "pt-16 lg:pt-24" : "pt-16",
-          isCollapsed ? "lg:pl-16" : "lg:pl-64"
+          isCollapsed ? "lg:pl-20" : "lg:pl-64"
         )}
       >
         <div className="container mx-auto p-4 sm:p-6 lg:p-8">

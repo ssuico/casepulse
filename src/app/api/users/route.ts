@@ -29,19 +29,23 @@ export async function POST(request: NextRequest) {
     await connectDB();
     
     const body = await request.json();
-    const { username, password, role } = body;
+    const { email, password, role, firstName, lastName, phone } = body;
+
+    console.log("Received user data:", { email, role, firstName, lastName, phone });
 
     // Validation
-    if (!username || !password || !role) {
+    if (!email || !password || !role) {
       return NextResponse.json(
-        { success: false, message: "Username, password, and role are required" },
+        { success: false, message: "Email, password, and role are required" },
         { status: 400 }
       );
     }
 
-    if (username.length < 3) {
+    // Validate email format
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { success: false, message: "Username must be at least 3 characters" },
+        { success: false, message: "Please enter a valid email address" },
         { status: 400 }
       );
     }
@@ -60,21 +64,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if username already exists
-    const existingUser = await User.findOne({ username });
+    // Check if email already exists
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return NextResponse.json(
-        { success: false, message: "Username already exists" },
+        { success: false, message: "Email already exists" },
         { status: 409 }
       );
     }
 
     // Create new user (password will be hashed automatically by the pre-save hook)
-    const user = await User.create({
-      username,
+    const userData: any = {
+      email: email.toLowerCase(),
       password,
       role,
-    });
+    };
+
+    // Only add optional fields if they have values
+    if (firstName && firstName.trim()) userData.firstName = firstName.trim();
+    if (lastName && lastName.trim()) userData.lastName = lastName.trim();
+    if (phone && phone.trim()) userData.phone = phone.trim();
+
+    console.log("Creating user with data:", userData);
+
+    const user = await User.create(userData);
+
+    console.log("User created successfully:", user.toObject());
 
     // Return user without password (password is excluded by default with select: false)
     const userObject = user.toObject();
