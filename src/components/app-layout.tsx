@@ -119,7 +119,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-[#3867d6] border-t-transparent rounded-full animate-spin" />
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -142,8 +142,8 @@ export function AppLayout({ children }: AppLayoutProps) {
             <div className="flex items-center space-x-4 flex-1 min-w-0">
               {/* Logo */}
               <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
-                  <Activity className="h-6 w-6 text-white" />
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[#3867d6]">
+                  <Activity className="h-6 w-6 text-white" strokeWidth={2.5} />
                 </div>
                 <span className="text-lg font-bold text-foreground hidden sm:block">
                   Case Pulse
@@ -205,7 +205,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         className={cn(
           "transition-all duration-300 min-h-screen",
           title ? "pt-16 lg:pt-24" : "pt-16",
-          isCollapsed ? "lg:pl-20" : "lg:pl-64"
+          isCollapsed ? "lg:pl-20" : "lg:pl-[18%]"
         )}
       >
         <div className="container mx-auto p-4 sm:p-6 lg:p-8">

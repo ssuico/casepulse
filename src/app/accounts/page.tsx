@@ -102,7 +102,7 @@ export default function AccountsPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           {/* Total Accounts Card */}
-          <div className="relative bg-blue-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
             <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
               <User className="h-16 w-16 text-white" />
             </div>
@@ -113,7 +113,7 @@ export default function AccountsPage() {
           </div>
 
           {/* Active Accounts Card */}
-          <div className="relative bg-green-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
             <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
               <User className="h-16 w-16 text-white" />
             </div>
@@ -124,7 +124,7 @@ export default function AccountsPage() {
           </div>
 
           {/* Last Updated Card */}
-          <div className="relative bg-cyan-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+          <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
             <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
               <RefreshCw className="h-16 w-16 text-white" />
             </div>

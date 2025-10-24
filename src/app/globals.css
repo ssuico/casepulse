@@ -64,7 +64,7 @@
   --card-foreground: var(--text-100);
   --popover: #ffffff;
   --popover-foreground: var(--text-100);
-  --primary: var(--primary-100);
+  --primary: #000000;
   --primary-foreground: #ffffff;
   --secondary: var(--bg-200);
   --secondary-foreground: var(--text-100);
@@ -86,14 +86,14 @@
   --chart-5: #8b5cf6;
   
   /* Sidebar */
-  --sidebar: var(--primary-300);
-  --sidebar-foreground: var(--text-100);
-  --sidebar-primary: var(--primary-100);
+  --sidebar: #3867d6;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #2847a0;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--bg-200);
-  --sidebar-accent-foreground: var(--text-100);
-  --sidebar-border: var(--bg-300);
-  --sidebar-ring: var(--accent-100);
+  --sidebar-accent: rgba(255, 255, 255, 0.15);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: rgba(255, 255, 255, 0.3);
 }
 
 @layer base {

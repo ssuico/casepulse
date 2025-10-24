@@ -296,7 +296,7 @@ export default function ProfilePage() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-[#3867d6] border-t-transparent rounded-full animate-spin" />
           <p className="text-muted-foreground">Loading profile...</p>
         </div>
       </div>
@@ -315,15 +315,15 @@ export default function ProfilePage() {
                 {avatarPreview ? (
                   <Avatar className="h-32 w-32">
                     <AvatarImage src={avatarPreview} alt="Profile" />
-                    <AvatarFallback className="bg-primary/10 text-primary text-3xl">
+                    <AvatarFallback className="bg-[#3867d6]/10 text-[#3867d6] text-3xl">
                       {userData.firstName && userData.lastName
                         ? `${userData.firstName[0]}${userData.lastName[0]}`.toUpperCase()
                         : userData.email?.substring(0, 2).toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>
                 ) : (
-                  <div className="h-32 w-32 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="h-16 w-16 text-primary" />
+                  <div className="h-32 w-32 rounded-full bg-[#3867d6]/10 flex items-center justify-center">
+                    <User className="h-16 w-16 text-[#3867d6]" />
                   </div>
                 )}
                 <Button
@@ -386,7 +386,7 @@ export default function ProfilePage() {
           {/* Account Information */}
           <Card className="p-5">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              <Info className="h-5 w-5 text-primary" />
+              <Info className="h-5 w-5 text-[#3867d6]" />
               Account Information
             </h3>
             <div className="space-y-3 text-sm">
@@ -420,7 +420,7 @@ export default function ProfilePage() {
           {/* Personal Information */}
           <Card className="p-5">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" />
+              <User className="h-5 w-5 text-[#3867d6]" />
               Personal Information
             </h3>
             <form onSubmit={handleUpdateProfile} className="space-y-3">
@@ -484,7 +484,7 @@ export default function ProfilePage() {
           {/* Change Password */}
           <Card className="p-5">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              <KeyRound className="h-5 w-5 text-primary" />
+              <KeyRound className="h-5 w-5 text-[#3867d6]" />
               Change Password
             </h3>
             <form onSubmit={handleChangePassword} className="space-y-3">

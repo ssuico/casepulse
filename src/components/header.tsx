@@ -53,7 +53,7 @@ export function Header({ isCollapsed, onMenuClick, title, description }: HeaderP
     <header
       className={cn(
         "fixed top-0 right-0 z-30 border-b border-border/50 bg-gradient-to-r from-white via-white to-primary/[0.02] backdrop-blur-md supports-[backdrop-filter]:bg-white/95 transition-all duration-300 shadow-md",
-        isCollapsed ? "left-20" : "left-64",
+        isCollapsed ? "left-20" : "left-[18%]",
         title ? "h-16 lg:h-24" : "h-16"
       )}
     >
@@ -66,7 +66,7 @@ export function Header({ isCollapsed, onMenuClick, title, description }: HeaderP
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden flex-shrink-0 hover:bg-primary/5"
+            className="lg:hidden flex-shrink-0 hover:bg-[#3867d6]/5"
             onClick={onMenuClick}
           >
             <Menu className="h-5 w-5" />
@@ -96,7 +96,7 @@ export function Header({ isCollapsed, onMenuClick, title, description }: HeaderP
           <Button 
             variant="ghost" 
             size="icon" 
-            className="relative hover:bg-primary/5 transition-colors"
+            className="relative hover:bg-[#3867d6]/5 transition-colors"
           >
             <Bell className="h-5 w-5" />
             <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full animate-pulse shadow-sm shadow-red-500/50" />
@@ -109,18 +109,18 @@ export function Header({ isCollapsed, onMenuClick, title, description }: HeaderP
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="relative h-10 w-10 rounded-full hover:bg-primary/5 transition-colors"
+                className="relative h-10 w-10 rounded-full hover:bg-[#3867d6]/5 transition-colors"
               >
                 {user?.avatar ? (
-                  <Avatar className="h-9 w-9 ring-2 ring-primary/10 hover:ring-primary/20 transition-all">
+                  <Avatar className="h-9 w-9 ring-2 ring-[#3867d6]/20 hover:ring-[#3867d6]/40 transition-all">
                     <AvatarImage src={user.avatar} alt="User avatar" />
-                    <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    <AvatarFallback className="bg-[#3867d6]/10 text-[#3867d6] font-semibold">
                       {getInitials()}
                     </AvatarFallback>
                   </Avatar>
                 ) : (
-                  <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-primary/10 hover:ring-primary/20 transition-all">
-                    <User className="h-5 w-5 text-primary" />
+                  <div className="h-9 w-9 rounded-full bg-[#3867d6]/10 flex items-center justify-center ring-2 ring-[#3867d6]/20 hover:ring-[#3867d6]/40 transition-all">
+                    <User className="h-5 w-5 text-[#3867d6]" />
                   </div>
                 )}
                 <span className="sr-only">User menu</span>

@@ -73,22 +73,22 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
       />
 
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 z-50 h-screen w-64 border-r bg-gradient-to-b from-sidebar to-sidebar/95 shadow-xl lg:hidden">
+      <aside className="fixed left-0 top-0 z-50 h-screen w-64 border-r bg-sidebar shadow-xl lg:hidden">
         {/* Header */}
-        <div className="relative flex h-16 items-center justify-between border-b border-border/50 px-5">
+        <div className="relative flex h-16 items-center justify-between border-b border-white/10 px-5">
           {/* Decorative gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent" />
           
           <Link href="/" className="relative flex items-center space-x-3 group" onClick={onClose}>
-            <div className="relative flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-md group-hover:shadow-lg transition-all duration-200">
-              <Activity className="h-6 w-6 text-white" />
-              <div className="absolute inset-0 rounded-xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-white to-white/95 shadow-[0_2px_8px_rgba(0,0,0,0.12)] group-hover:shadow-[0_4px_12px_rgba(0,0,0,0.18)] transition-all duration-200">
+              <Activity className="h-6 w-6 text-[#3867d6]" strokeWidth={2.5} />
+              <div className="absolute inset-0 rounded-xl bg-[#3867d6]/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-foreground tracking-tight">
+              <span className="text-lg font-bold text-white tracking-tight">
                 Case Pulse
               </span>
-              <span className="text-[10px] text-muted-foreground font-medium tracking-wide uppercase">
+              <span className="text-[10px] text-white/80 font-medium tracking-wide uppercase">
                 Monitoring System
               </span>
             </div>
@@ -98,9 +98,9 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
             variant="ghost" 
             size="icon" 
             onClick={onClose}
-            className="relative z-10 hover:bg-sidebar-accent/60"
+            className="relative z-10 hover:bg-sidebar-accent text-white/80 hover:text-white"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" strokeWidth={2.5} />
           </Button>
         </div>
 
@@ -110,7 +110,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
             <div key={section.title} className={cn(sectionIndex > 0 && "mt-6")}>
               {/* Section Header */}
               <div className="px-3 mb-2">
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider">
                   {section.title}
                 </h3>
               </div>
@@ -129,13 +129,13 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                       className={cn(
                         "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                         isActive
-                          ? "bg-primary text-white shadow-md shadow-primary/20"
-                          : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-foreground"
+                          ? "bg-white text-black shadow-[0_2px_8px_rgba(0,0,0,0.15),0_1px_3px_rgba(0,0,0,0.1)]"
+                          : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-white hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)]"
                       )}
                     >
                       {/* Active indicator */}
                       {isActive && (
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded-r-full" />
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-black rounded-r-full" />
                       )}
                       
                       {/* Icon with subtle animation */}
@@ -143,7 +143,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                         "flex items-center justify-center transition-transform duration-200",
                         !isActive && "group-hover:scale-110"
                       )}>
-                        <Icon className="h-4 w-4 flex-shrink-0" />
+                        <Icon className="h-4 w-4 flex-shrink-0" strokeWidth={2.5} />
                       </div>
                       
                       {/* Label */}
@@ -151,7 +151,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                       
                       {/* Hover effect overlay */}
                       {!isActive && (
-                        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                       )}
                     </Link>
                   );
@@ -162,8 +162,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
         </nav>
 
         {/* Subtle decorative elements */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/5 to-transparent rounded-bl-full pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-primary/3 to-transparent rounded-tr-full pointer-events-none" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full pointer-events-none" />
       </aside>
     </>
   );

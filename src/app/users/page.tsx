@@ -207,7 +207,7 @@ export default function UsersPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {/* Total Users Card */}
-        <div className="relative bg-blue-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
           <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
             <UsersIcon className="h-16 w-16 text-white" />
           </div>
@@ -218,7 +218,7 @@ export default function UsersPage() {
         </div>
 
         {/* Managers Card */}
-        <div className="relative bg-purple-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
           <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
             <Shield className="h-16 w-16 text-white" />
           </div>
@@ -229,7 +229,7 @@ export default function UsersPage() {
         </div>
 
         {/* Regular Users Card */}
-        <div className="relative bg-cyan-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
           <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
             <UserIcon className="h-16 w-16 text-white" />
           </div>
@@ -269,8 +269,8 @@ export default function UsersPage() {
       <div className="bg-gradient-to-br from-card via-card to-primary/[0.02] border rounded-xl overflow-hidden shadow-sm">
         {isLoading ? (
           <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 mb-4">
-              <Loader2 className="h-8 w-8 text-primary animate-spin" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#3867d6]/10 to-[#3867d6]/5 mb-4">
+              <Loader2 className="h-8 w-8 text-[#3867d6] animate-spin" />
             </div>
             <p className="text-muted-foreground font-medium">Loading users...</p>
           </div>
@@ -278,8 +278,8 @@ export default function UsersPage() {
           <div className="relative text-center py-16 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-transparent opacity-50" />
             <div className="relative">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 mb-4">
-                <UsersIcon className="h-10 w-10 text-primary" />
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#3867d6]/10 to-[#3867d6]/5 mb-4">
+                <UsersIcon className="h-10 w-10 text-[#3867d6]" />
               </div>
               <h3 className="text-xl font-bold mb-2">No users found</h3>
               <p className="text-muted-foreground mb-4 max-w-sm mx-auto">
@@ -343,17 +343,17 @@ export default function UsersPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center space-x-3">
                           {user.avatar ? (
-                            <Avatar className="h-11 w-11 ring-2 ring-primary/10 group-hover:ring-primary/20 transition-all">
+                            <Avatar className="h-11 w-11 ring-2 ring-[#3867d6]/20 group-hover:ring-[#3867d6]/40 transition-all">
                               <AvatarImage src={user.avatar} alt={user.email} />
-                              <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/5 text-primary text-sm font-semibold">
+                              <AvatarFallback className="bg-gradient-to-br from-[#3867d6]/10 to-[#3867d6]/5 text-[#3867d6] text-sm font-semibold">
                                 {user.firstName && user.lastName
                                   ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
                                   : user.email?.substring(0, 2).toUpperCase() || "U"}
                               </AvatarFallback>
                             </Avatar>
                           ) : (
-                            <div className="h-11 w-11 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center ring-2 ring-primary/10 group-hover:ring-primary/20 transition-all">
-                              <UserIcon className="h-5 w-5 text-primary" />
+                            <div className="h-11 w-11 rounded-full bg-gradient-to-br from-[#3867d6]/10 to-[#3867d6]/5 flex items-center justify-center ring-2 ring-[#3867d6]/20 group-hover:ring-[#3867d6]/40 transition-all">
+                              <UserIcon className="h-5 w-5 text-[#3867d6]" />
                             </div>
                           )}
                           <div>

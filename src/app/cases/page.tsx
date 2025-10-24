@@ -462,7 +462,7 @@ export default function CasesPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Total Cases Card */}
-        <div className="relative bg-blue-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
           <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
             <FileText className="h-16 w-16 text-white" />
           </div>
@@ -473,7 +473,7 @@ export default function CasesPage() {
         </div>
 
         {/* Open Cases Card */}
-        <div className="relative bg-red-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
           <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
             <FileText className="h-16 w-16 text-white" />
           </div>
@@ -486,7 +486,7 @@ export default function CasesPage() {
         </div>
 
         {/* In Progress Card */}
-        <div className="relative bg-green-600 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
           <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
             <RefreshCw className="h-16 w-16 text-white" />
           </div>
@@ -499,7 +499,7 @@ export default function CasesPage() {
         </div>
 
         {/* Urgent Cases Card */}
-        <div className="relative bg-cyan-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
+        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
           <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
             <AlertTriangle className="h-16 w-16 text-white" />
           </div>

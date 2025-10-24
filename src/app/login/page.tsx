@@ -65,10 +65,10 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex flex-col items-center">
-            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary shadow-lg mb-3">
-              <Activity className="h-10 w-10 text-white" />
+            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-[#3867d6] shadow-lg mb-3 hover:shadow-xl transition-shadow">
+              <Activity className="h-10 w-10 text-white" strokeWidth={2.5} />
             </div>
-            <span className="text-2xl font-bold text-primary">
+            <span className="text-2xl font-bold text-[#1E2022]">
               Case Pulse
             </span>
           </Link>
