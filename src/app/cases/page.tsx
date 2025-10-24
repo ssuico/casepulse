@@ -359,106 +359,6 @@ export default function CasesPage() {
 
   return (
     <div>
-      {/* Action Buttons */}
-      <div className="mb-6 flex justify-end">
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
-          <Button size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            New Case
-          </Button>
-        </div>
-      </div>
-
-      {/* Account and Brand Filters */}
-      <div className="mb-4">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-          <select
-            value={selectedAccount}
-            onChange={(e) => setSelectedAccount(e.target.value)}
-            className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer flex-1 sm:flex-initial"
-            suppressHydrationWarning
-          >
-            <option value="all">All Accounts</option>
-            {accounts.map((account) => (
-              <option key={account._id} value={account._id}>
-                {account.accountName}
-              </option>
-            ))}
-          </select>
-          <select
-            value={selectedBrand}
-            onChange={(e) => setSelectedBrand(e.target.value)}
-            className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer flex-1 sm:flex-initial"
-            disabled={selectedAccount === "all" && brands.length > 0}
-            suppressHydrationWarning
-          >
-            <option value="all">All Brands</option>
-            {filteredBrands.map((brand) => (
-              <option key={brand._id} value={brand._id}>
-                {brand.brandName}
-              </option>
-            ))}
-          </select>
-          <Button 
-            size="sm"
-            disabled={selectedAccount === "all" || selectedBrand === "all" || isRequestingCases}
-            className="whitespace-nowrap"
-            onClick={handleRequestCases}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isRequestingCases ? 'animate-spin' : ''}`} />
-            {isRequestingCases ? "Starting..." : "Request Cases"}
-          </Button>
-        </div>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="mb-6">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search cases by ID or title..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 cursor-text"
-            />
-          </div>
-          <div className="flex gap-2">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer"
-              suppressHydrationWarning
-            >
-              <option value="all">All Status</option>
-              <option value="open">Open</option>
-              <option value="in_progress">In Progress</option>
-              <option value="resolved">Resolved</option>
-              <option value="pending">Pending</option>
-            </select>
-            <select
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-              className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer"
-              suppressHydrationWarning
-            >
-              <option value="all">All Priority</option>
-              <option value="urgent">Urgent</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Total Cases Card */}
@@ -512,6 +412,107 @@ export default function CasesPage() {
         </div>
       </div>
 
+      {/* Filters and Action Buttons */}
+      <div className="mb-4">
+        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center lg:justify-between">
+          {/* Left side - Dropdowns and Request Button */}
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center flex-1">
+            <select
+              value={selectedAccount}
+              onChange={(e) => setSelectedAccount(e.target.value)}
+              className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer w-full sm:w-auto"
+              suppressHydrationWarning
+            >
+              <option value="all">All Accounts</option>
+              {accounts.map((account) => (
+                <option key={account._id} value={account._id}>
+                  {account.accountName}
+                </option>
+              ))}
+            </select>
+            <select
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer w-full sm:w-auto"
+              disabled={selectedAccount === "all" && brands.length > 0}
+              suppressHydrationWarning
+            >
+              <option value="all">All Brands</option>
+              {filteredBrands.map((brand) => (
+                <option key={brand._id} value={brand._id}>
+                  {brand.brandName}
+                </option>
+              ))}
+            </select>
+            <Button 
+              size="sm"
+              disabled={selectedAccount === "all" || selectedBrand === "all" || isRequestingCases}
+              className="whitespace-nowrap w-full sm:w-auto"
+              onClick={handleRequestCases}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isRequestingCases ? 'animate-spin' : ''}`} />
+              {isRequestingCases ? "Starting..." : "Request Cases"}
+            </Button>
+          </div>
+
+          {/* Right side - Action Buttons */}
+          <div className="flex items-center gap-2 w-full lg:w-auto">
+            <Button variant="outline" size="sm" className="flex-1 lg:flex-initial">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+            <Button size="sm" className="flex-1 lg:flex-initial">
+              <Plus className="h-4 w-4 mr-2" />
+              New Case
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search cases by ID or title..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 cursor-text"
+            />
+          </div>
+          <div className="flex gap-2">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer"
+              suppressHydrationWarning
+            >
+              <option value="all">All Status</option>
+              <option value="open">Open</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+              <option value="pending">Pending</option>
+            </select>
+            <select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="px-3 py-2 border rounded-md text-sm bg-background cursor-pointer"
+              suppressHydrationWarning
+            >
+              <option value="all">All Priority</option>
+              <option value="urgent">Urgent</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+            <Button variant="outline" size="sm">
+              <Filter className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Cases Table */}
       <div className="bg-gradient-to-br from-card via-card to-primary/[0.02] border rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
@@ -519,7 +520,7 @@ export default function CasesPage() {
             <thead className="bg-gradient-to-r from-muted/50 via-muted/40 to-muted/50 border-b border-border/50">
               <tr>
                 <th 
-                  className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                   onClick={() => handleSort('id')}
                 >
                   <div className="flex items-center gap-1">
@@ -528,7 +529,7 @@ export default function CasesPage() {
                   </div>
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                   onClick={() => handleSort('title')}
                 >
                   <div className="flex items-center gap-1">
@@ -536,9 +537,9 @@ export default function CasesPage() {
                     <SortIcon field="title" />
                   </div>
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Workspace</th>
+                <th className="px-4 py-2 text-left text-sm font-medium">Workspace</th>
                 <th 
-                  className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                   onClick={() => handleSort('status')}
                 >
                   <div className="flex items-center gap-1">
@@ -547,7 +548,7 @@ export default function CasesPage() {
                   </div>
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                   onClick={() => handleSort('priority')}
                 >
                   <div className="flex items-center gap-1">
@@ -556,7 +557,7 @@ export default function CasesPage() {
                   </div>
                 </th>
                 <th 
-                  className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                   onClick={() => handleSort('updatedAt')}
                 >
                   <div className="flex items-center gap-1">
@@ -564,7 +565,7 @@ export default function CasesPage() {
                     <SortIcon field="updatedAt" />
                   </div>
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Actions</th>
+                <th className="px-4 py-2 text-left text-sm font-medium">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
@@ -576,48 +577,48 @@ export default function CasesPage() {
                     animation: `fadeIn 0.3s ease-in-out ${index * 0.05}s both`
                   }}
                 >
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-2">
                     <div className="flex items-center space-x-2">
-                      <div className="p-1.5 rounded-lg bg-muted/30 group-hover:bg-muted/50 transition-colors">
+                      <div className="p-1 rounded-lg bg-muted/30 group-hover:bg-muted/50 transition-colors">
                       {getStatusIcon(caseItem.status)}
                       </div>
-                      <span className="font-mono text-sm font-semibold">{caseItem.id}</span>
+                      <span className="font-mono text-sm">{caseItem.id}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-2">
                     <div>
-                      <p className="font-semibold text-sm text-foreground mb-0.5">{caseItem.title}</p>
-                      <div className="flex items-center gap-1.5">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-medium">
+                      <p className="text-sm text-foreground">{caseItem.title}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs">
                           {caseItem.category}
                         </span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="text-sm font-medium">{caseItem.workspace}</span>
+                  <td className="px-4 py-2">
+                    <span className="text-sm">{caseItem.workspace}</span>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border shadow-sm ${getStatusColor(caseItem.status)}`}>
+                  <td className="px-4 py-2">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg border shadow-sm ${getStatusColor(caseItem.status)}`}>
                       <div className="w-1.5 h-1.5 rounded-full bg-current" />
                       {caseItem.status.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border shadow-sm ${getPriorityColor(caseItem.priority)}`}>
+                  <td className="px-4 py-2">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg border shadow-sm ${getPriorityColor(caseItem.priority)}`}>
                       <AlertTriangle className="h-3 w-3" />
                       {caseItem.priority}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-2">
                     <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <div className="p-1.5 rounded-lg bg-muted/30">
+                      <div className="p-1 rounded-lg bg-muted/30">
                         <Clock className="h-3.5 w-3.5" />
                       </div>
                       <span>{formatDate(caseItem.updatedAt)}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-2">
                     <div className="flex items-center gap-1">
                       <Button 
                         variant="ghost" 

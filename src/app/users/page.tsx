@@ -204,42 +204,6 @@ export default function UsersPage() {
         </Button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        {/* Total Users Card */}
-        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
-            <UsersIcon className="h-16 w-16 text-white" />
-          </div>
-          <div className="relative text-right">
-            <p className="text-4xl font-bold text-white mb-1">{totalUsers}</p>
-            <p className="text-sm text-white/80 font-medium">Total Users</p>
-          </div>
-        </div>
-
-        {/* Managers Card */}
-        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
-            <Shield className="h-16 w-16 text-white" />
-          </div>
-          <div className="relative text-right">
-            <p className="text-4xl font-bold text-white mb-1">{totalManagers}</p>
-            <p className="text-sm text-white/80 font-medium">Managers</p>
-          </div>
-        </div>
-
-        {/* Regular Users Card */}
-        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
-            <UserIcon className="h-16 w-16 text-white" />
-          </div>
-          <div className="relative text-right">
-            <p className="text-4xl font-bold text-white mb-1">{totalRegularUsers}</p>
-            <p className="text-sm text-white/80 font-medium">Regular Users</p>
-          </div>
-        </div>
-      </div>
-
       {/* Search and Filters */}
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row gap-4">

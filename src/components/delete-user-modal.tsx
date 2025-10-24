@@ -14,7 +14,9 @@ import { AlertTriangle } from "lucide-react";
 
 interface User {
   _id: string;
-  username: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
   role: "user" | "manager";
 }
 
@@ -80,11 +82,16 @@ export function DeleteUserModal({ isOpen, onClose, onUserDeleted, user }: Delete
               {error}
             </div>
           )}
-          <div className="bg-muted p-4 rounded-md">
+          <div className="bg-muted p-4 rounded-md space-y-2">
+            {(user.firstName || user.lastName) && (
+              <p className="text-sm">
+                <span className="font-semibold">Name:</span> {user.firstName} {user.lastName}
+              </p>
+            )}
             <p className="text-sm">
-              <span className="font-semibold">Username:</span> {user.username}
+              <span className="font-semibold">Email:</span> {user.email}
             </p>
-            <p className="text-sm mt-1">
+            <p className="text-sm">
               <span className="font-semibold">Role:</span>{" "}
               <span className="capitalize">{user.role}</span>
             </p>

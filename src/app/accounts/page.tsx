@@ -99,47 +99,6 @@ export default function AccountsPage() {
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          {/* Total Accounts Card */}
-          <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-            <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
-              <User className="h-16 w-16 text-white" />
-            </div>
-            <div className="relative text-right">
-              <p className="text-4xl font-bold text-white mb-1">{accounts.length}</p>
-              <p className="text-sm text-white/80 font-medium">Total Accounts</p>
-            </div>
-          </div>
-
-          {/* Active Accounts Card */}
-          <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-            <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
-              <User className="h-16 w-16 text-white" />
-            </div>
-            <div className="relative text-right">
-              <p className="text-4xl font-bold text-white mb-1">{accounts.length}</p>
-              <p className="text-sm text-white/80 font-medium">Active Accounts</p>
-            </div>
-          </div>
-
-          {/* Last Updated Card */}
-          <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-            <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
-              <RefreshCw className="h-16 w-16 text-white" />
-            </div>
-            <div className="relative text-right">
-              <p className="text-xl font-bold text-white mb-1">
-                {accounts.length > 0 
-                  ? new Date(Math.max(...accounts.map(a => new Date(a.updatedAt).getTime()))).toLocaleDateString()
-                  : 'N/A'
-                }
-              </p>
-              <p className="text-sm text-white/80 font-medium">Last Updated</p>
-            </div>
-          </div>
-        </div>
-
         {/* Accounts Table */}
         {isLoadingAccounts ? (
           <div className="bg-card border rounded-lg p-12 text-center">
