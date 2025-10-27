@@ -19,6 +19,12 @@ const BrandSchema = new Schema(
       required: [true, 'Brand URL is required'],
       trim: true,
     },
+    marketplace: {
+      type: String,
+      enum: ['US', 'Canada', 'Mexico'],
+      required: [true, 'Marketplace is required'],
+      default: 'US',
+    },
     cookies: {
       type: String,
       default: '',

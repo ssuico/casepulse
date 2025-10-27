@@ -27,6 +27,7 @@ interface Brand {
     accountName: string;
   };
   brandUrl: string;
+  marketplace?: string;
   cookies?: string;
 }
 
@@ -49,6 +50,7 @@ export function EditBrandModal({
     brandName: "",
     sellerCentralAccountId: "",
     brandUrl: "",
+    marketplace: "US",
     cookies: "",
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +62,7 @@ export function EditBrandModal({
         brandName: brand.brandName,
         sellerCentralAccountId: brand.sellerCentralAccountId._id,
         brandUrl: brand.brandUrl,
+        marketplace: brand.marketplace || "US",
         cookies: brand.cookies || "",
       });
     }
@@ -152,6 +155,23 @@ export function EditBrandModal({
                     {account.accountName}
                   </option>
                 ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="marketplace">Marketplace *</Label>
+              <select
+                id="marketplace"
+                name="marketplace"
+                value={formData.marketplace}
+                onChange={handleChange}
+                required
+                disabled={isLoading}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="US">US</option>
+                <option value="Canada">Canada</option>
+                <option value="Mexico">Mexico</option>
               </select>
             </div>
 

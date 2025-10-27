@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   try {
     await dbConnect();
     const body = await request.json();
-    const { brandName, sellerCentralAccountId, brandUrl } = body;
+    const { brandName, sellerCentralAccountId, brandUrl, marketplace } = body;
 
     // Validate required fields
     if (!brandName || !sellerCentralAccountId || !brandUrl) {
@@ -50,6 +50,7 @@ export async function POST(request: Request) {
       brandName,
       sellerCentralAccountId,
       brandUrl,
+      marketplace: marketplace || 'US', // Default to US if not provided
     });
 
     const populatedBrand = await Brand.findById(brand._id).populate('sellerCentralAccountId', 'accountName');

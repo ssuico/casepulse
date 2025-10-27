@@ -48,7 +48,7 @@ export async function PUT(
     await dbConnect();
     const { id } = await params;
     const body = await request.json();
-    const { brandName, sellerCentralAccountId, brandUrl, cookies } = body;
+    const { brandName, sellerCentralAccountId, brandUrl, marketplace, cookies } = body;
 
     // Validate required fields
     if (!brandName || !sellerCentralAccountId || !brandUrl) {
@@ -78,6 +78,7 @@ export async function PUT(
       brandName: string;
       sellerCentralAccountId: string;
       brandUrl: string;
+      marketplace?: string;
       cookies?: string;
       cookiesUpdatedAt?: Date;
     } = {
@@ -85,6 +86,11 @@ export async function PUT(
       sellerCentralAccountId,
       brandUrl,
     };
+
+    // Add marketplace if provided
+    if (marketplace) {
+      updateData.marketplace = marketplace;
+    }
 
     // Only update cookies and timestamp if cookies value actually changed
     if (cookies !== undefined) {

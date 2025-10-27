@@ -36,6 +36,7 @@ export function AddBrandModal({
     brandName: "",
     sellerCentralAccountId: "",
     brandUrl: "",
+    marketplace: "US",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,6 +66,7 @@ export function AddBrandModal({
         brandName: "",
         sellerCentralAccountId: "",
         brandUrl: "",
+        marketplace: "US",
       });
 
       // Close modal and refresh brands
@@ -138,6 +140,23 @@ export function AddBrandModal({
                   No accounts available. Please add a Seller Central account first.
                 </p>
               )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="marketplace">Marketplace *</Label>
+              <select
+                id="marketplace"
+                name="marketplace"
+                value={formData.marketplace}
+                onChange={handleChange}
+                required
+                disabled={isLoading}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="US">US</option>
+                <option value="Canada">Canada</option>
+                <option value="Mexico">Mexico</option>
+              </select>
             </div>
 
             <div className="space-y-2">

@@ -4,6 +4,7 @@ export interface IBrand extends Document {
   brandName: string;
   sellerCentralAccountId: mongoose.Types.ObjectId;
   brandUrl: string;
+  marketplace: 'US' | 'Canada' | 'Mexico';
   cookies?: string;
   cookiesUpdatedAt?: Date;
   createdAt: Date;
@@ -26,6 +27,12 @@ const BrandSchema = new Schema<IBrand>(
       type: String,
       required: [true, 'Brand URL is required'],
       trim: true,
+    },
+    marketplace: {
+      type: String,
+      enum: ['US', 'Canada', 'Mexico'],
+      required: [true, 'Marketplace is required'],
+      default: 'US',
     },
     cookies: {
       type: String,

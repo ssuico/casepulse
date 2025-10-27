@@ -11,6 +11,7 @@ import { AlertModal } from "@/components/alert-modal";
 interface Brand {
   _id: string;
   brandName: string;
+  marketplace?: string;
   sellerCentralAccountId: {
     _id: string;
     accountName: string;
@@ -235,6 +236,9 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
                   <SortIcon field="brandName" />
                 </div>
               </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">
+                Marketplace
+              </th>
               <th 
                 className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                 onClick={() => handleSort('sellerCentralAccountId.accountName')}
@@ -284,6 +288,11 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
                       <p className="text-xs text-muted-foreground">Brand Store</p>
                     </div>
                   </div>
+                </td>
+                <td className="px-4 py-3">
+                  <Badge variant="outline" className="font-medium">
+                    {brand.marketplace || 'US'}
+                  </Badge>
                 </td>
                 <td className="px-4 py-3">
                   <p className="text-sm font-medium">
