@@ -2,7 +2,6 @@ import puppeteer from 'puppeteer';
 import dotenv from 'dotenv';
 import { authenticator } from 'otplib';
 import mongoose from 'mongoose';
-import fs from 'fs';
 import connectDB from './lib/mongodb.js';
 import Account from './models/Account.js';
 import Brand from './models/Brand.js';
@@ -495,21 +494,6 @@ async function main() {
     // Load configuration from MongoDB
     await loadConfiguration();
     
-    // Write CONFIG to debug file
-    const debugInfo = {
-      timestamp: new Date().toISOString(),
-      brandId: CONFIG.brandId,
-      accountId: CONFIG.accountId,
-      accountName: CONFIG.accountName,
-      brandName: CONFIG.brandName,
-      brandUrl: CONFIG.brandUrl,
-      sellerCentralUrl: CONFIG.sellerCentralUrl,
-    };
-    fs.writeFileSync('debug-config.txt', JSON.stringify(debugInfo, null, 2));
-    console.log('📝 Debug info written to debug-config.txt');
-    console.log('📋 Current CONFIG:');
-    console.log(JSON.stringify(debugInfo, null, 2));
-    
     // Validate configuration
     console.log('🔍 Validating configuration...');
     validateConfiguration();
@@ -561,15 +545,6 @@ async function main() {
       console.log(`\n🎯 Navigating to brand: ${CONFIG.brandName || 'Unknown'}`);
       console.log(`🌐 Brand URL: ${CONFIG.brandUrl}`);
       
-      // Write navigation attempt to file
-      const navInfo = {
-        timestamp: new Date().toISOString(),
-        action: 'ATTEMPTING NAVIGATION',
-        brandName: CONFIG.brandName,
-        brandUrl: CONFIG.brandUrl,
-      };
-      fs.appendFileSync('debug-config.txt', '\n\nNAVIGATION ATTEMPT:\n' + JSON.stringify(navInfo, null, 2));
-      
       await page.goto(CONFIG.brandUrl, {
         waitUntil: 'networkidle2',
         timeout: 30000,
@@ -579,16 +554,6 @@ async function main() {
       
       const currentUrl = page.url();
       console.log(`📍 Current URL: ${currentUrl}`);
-      
-      // Write final result to file
-      const finalInfo = {
-        timestamp: new Date().toISOString(),
-        action: 'NAVIGATION COMPLETE',
-        requestedUrl: CONFIG.brandUrl,
-        actualUrl: currentUrl,
-        match: currentUrl === CONFIG.brandUrl,
-      };
-      fs.appendFileSync('debug-config.txt', '\n\nNAVIGATION RESULT:\n' + JSON.stringify(finalInfo, null, 2));
       
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
       const successResult = {
