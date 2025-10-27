@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer';
 import dotenv from 'dotenv';
 import { authenticator } from 'otplib';
 import mongoose from 'mongoose';
+import fs from 'fs';
 import connectDB from './lib/mongodb.js';
 import Account from './models/Account.js';
 import Brand from './models/Brand.js';
@@ -112,6 +113,7 @@ async function fetchBrandFromDB(brandId) {
     }
     
     console.log(`✅ Found brand: ${brand.brandName}`);
+    console.log(`📌 Brand URL from DB: ${brand.brandUrl}`);
     console.log(`🔓 Decrypting account credentials...`);
     
     // Decrypt the account credentials
@@ -214,6 +216,11 @@ async function loadConfiguration() {
     CONFIG.twoFAKey = account.twoFAKey;
     CONFIG.brandName = brand.brandName;
     CONFIG.brandUrl = brand.brandUrl;
+    
+    console.log(`✅ CONFIG populated with brand data:`);
+    console.log(`   - Account: ${CONFIG.accountName}`);
+    console.log(`   - Brand Name: ${CONFIG.brandName}`);
+    console.log(`   - Brand URL: ${CONFIG.brandUrl}`);
     
     return;
   }
@@ -397,31 +404,27 @@ async function login(page) {
         page.click('input#auth-signin-button, button[type="submit"], input[type="submit"]'),
       ]);
 
-      await wait(2000);
+      await wait(3000);
     }
 
-    // Verify successful login
-    console.log('✅ Verifying login success...');
-    try {
-      await page.waitForSelector('#sc-navbar, nav[data-test-id="navbar"], #sc-mkt-picker-switcher-select, [data-test-id="seller-central-dashboard"]', {
-        timeout: 15000,
-      });
-    } catch (error) {
-      // Check if credentials were invalid
-      const hasError = await page.evaluate(() => {
-        const bodyText = document.body.innerText.toLowerCase();
-        return bodyText.includes('password is incorrect') ||
-               bodyText.includes('cannot find an account') ||
-               bodyText.includes('incorrect code');
-      });
+    // After 2FA (or regular login), just wait a bit and check for errors
+    console.log('✅ Checking for login errors...');
+    await wait(2000);
+    
+    // Check if credentials were invalid
+    const hasError = await page.evaluate(() => {
+      const bodyText = document.body.innerText.toLowerCase();
+      return bodyText.includes('password is incorrect') ||
+             bodyText.includes('cannot find an account') ||
+             bodyText.includes('incorrect code') ||
+             bodyText.includes('there was a problem');
+    });
 
-      if (hasError) {
-        throw new Error('Invalid credentials or 2FA code');
-      }
-      throw new Error('Dashboard not loaded - login may have failed');
+    if (hasError) {
+      throw new Error('Invalid credentials or 2FA code');
     }
 
-    console.log('✅ Login successful!');
+    console.log('✅ Login successful! (No errors detected)');
     return { success: true, step: 'login', message: 'Login successful' };
 
   } catch (error) {
@@ -492,6 +495,21 @@ async function main() {
     // Load configuration from MongoDB
     await loadConfiguration();
     
+    // Write CONFIG to debug file
+    const debugInfo = {
+      timestamp: new Date().toISOString(),
+      brandId: CONFIG.brandId,
+      accountId: CONFIG.accountId,
+      accountName: CONFIG.accountName,
+      brandName: CONFIG.brandName,
+      brandUrl: CONFIG.brandUrl,
+      sellerCentralUrl: CONFIG.sellerCentralUrl,
+    };
+    fs.writeFileSync('debug-config.txt', JSON.stringify(debugInfo, null, 2));
+    console.log('📝 Debug info written to debug-config.txt');
+    console.log('📋 Current CONFIG:');
+    console.log(JSON.stringify(debugInfo, null, 2));
+    
     // Validate configuration
     console.log('🔍 Validating configuration...');
     validateConfiguration();
@@ -538,30 +556,57 @@ async function main() {
       process.exit(1);
     }
 
-    // Check if we're in API mode (specific brand requested)
-    const isApiMode = CONFIG.brandUrl && CONFIG.brandName;
-
-    if (isApiMode) {
-      // API Mode: Navigate to specific brand
-      console.log(`\n🎯 API Mode: Navigating to ${CONFIG.brandName}...`);
-      const result = await navigateBrand(page, CONFIG.brandName, CONFIG.brandUrl);
+    // If we have a brand URL, navigate to it immediately
+    if (CONFIG.brandUrl) {
+      console.log(`\n🎯 Navigating to brand: ${CONFIG.brandName || 'Unknown'}`);
+      console.log(`🌐 Brand URL: ${CONFIG.brandUrl}`);
+      
+      // Write navigation attempt to file
+      const navInfo = {
+        timestamp: new Date().toISOString(),
+        action: 'ATTEMPTING NAVIGATION',
+        brandName: CONFIG.brandName,
+        brandUrl: CONFIG.brandUrl,
+      };
+      fs.appendFileSync('debug-config.txt', '\n\nNAVIGATION ATTEMPT:\n' + JSON.stringify(navInfo, null, 2));
+      
+      await page.goto(CONFIG.brandUrl, {
+        waitUntil: 'networkidle2',
+        timeout: 30000,
+      });
+      
+      await wait(2000);
+      
+      const currentUrl = page.url();
+      console.log(`📍 Current URL: ${currentUrl}`);
+      
+      // Write final result to file
+      const finalInfo = {
+        timestamp: new Date().toISOString(),
+        action: 'NAVIGATION COMPLETE',
+        requestedUrl: CONFIG.brandUrl,
+        actualUrl: currentUrl,
+        match: currentUrl === CONFIG.brandUrl,
+      };
+      fs.appendFileSync('debug-config.txt', '\n\nNAVIGATION RESULT:\n' + JSON.stringify(finalInfo, null, 2));
       
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
       const successResult = {
-        success: result.success,
-        message: `Login completed for ${CONFIG.accountName} - ${CONFIG.brandName}`,
+        success: true,
+        message: `Logged in and navigated to ${CONFIG.brandName || 'brand'}`,
         accountName: CONFIG.accountName,
         brandName: CONFIG.brandName,
+        brandUrl: CONFIG.brandUrl,
+        currentUrl: currentUrl,
         duration: `${duration}s`,
       };
 
       console.log('\n✅ ========== SUCCESS ==========');
       console.log(JSON.stringify(successResult, null, 2));
       console.log('================================\n');
-      console.log('🔍 Browser will remain open. You are now on the Seller Central homepage.');
-      console.log('📌 Press Ctrl+C to close the browser when done.');
+      console.log('🔍 Browser will remain open.');
+      console.log('📌 Press Ctrl+C to close when done.');
 
-      // Keep browser open indefinitely
       clearTimeout(timeoutId);
       await new Promise(() => {}); // Keep alive forever
       

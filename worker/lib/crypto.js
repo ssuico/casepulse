@@ -1,4 +1,8 @@
 import crypto from 'crypto';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 // Encryption configuration
 const ALGORITHM = 'aes-256-gcm';

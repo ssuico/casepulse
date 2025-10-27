@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-10-27T20:39:11.305Z",
+  "brandId": "68ffc8ac5521bb9b6229f28e",
+  "accountName": "Outdoor Equipped - Jomael Gemota",
+  "brandName": "Outdoor Equipped",
+  "brandUrl": "https://sellercentral.amazon.com/home?mons_sel_dir_mcid=amzn1.merchant.d.AC52XPOS23A3N5BQHEM7N767DENA&mons_sel_mkid=amzn1.mp.o.ATVPDKIKX0DER&mons_sel_dir_paid=amzn1.pa.d.AC3YC5ZRR6GH2GJ6KJQ7MWY47WSA&ignore_selection_changed=true",
+  "sellerCentralUrl": "https://sellercentral.amazon.com/home"
+}
+
+NAVIGATION ATTEMPT:
+{
+  "timestamp": "2025-10-27T20:39:42.410Z",
+  "action": "ATTEMPTING NAVIGATION",
+  "brandName": "Outdoor Equipped",
+  "brandUrl": "https://sellercentral.amazon.com/home?mons_sel_dir_mcid=amzn1.merchant.d.AC52XPOS23A3N5BQHEM7N767DENA&mons_sel_mkid=amzn1.mp.o.ATVPDKIKX0DER&mons_sel_dir_paid=amzn1.pa.d.AC3YC5ZRR6GH2GJ6KJQ7MWY47WSA&ignore_selection_changed=true"
+}
+
+NAVIGATION RESULT:
+{
+  "timestamp": "2025-10-27T20:40:05.639Z",
+  "action": "NAVIGATION COMPLETE",
+  "requestedUrl": "https://sellercentral.amazon.com/home?mons_sel_dir_mcid=amzn1.merchant.d.AC52XPOS23A3N5BQHEM7N767DENA&mons_sel_mkid=amzn1.mp.o.ATVPDKIKX0DER&mons_sel_dir_paid=amzn1.pa.d.AC3YC5ZRR6GH2GJ6KJQ7MWY47WSA&ignore_selection_changed=true",
+  "actualUrl": "https://sellercentral.amazon.com/home?mons_sel_dir_mcid=amzn1.merchant.d.AC52XPOS23A3N5BQHEM7N767DENA&mons_sel_mkid=amzn1.mp.o.ATVPDKIKX0DER&mons_sel_dir_paid=amzn1.pa.d.AC3YC5ZRR6GH2GJ6KJQ7MWY47WSA&ignore_selection_changed=true",
+  "match": true
+}
