@@ -1,6 +1,11 @@
 import puppeteer from 'puppeteer';
 import dotenv from 'dotenv';
 import { authenticator } from 'otplib';
+import mongoose from 'mongoose';
+import connectDB from './lib/mongodb.js';
+import Account from './models/Account.js';
+import Brand from './models/Brand.js';
+import PuppeteerConfig from './models/PuppeteerConfig.js';
 
 // Load environment variables
 dotenv.config();
@@ -8,31 +13,233 @@ dotenv.config();
 // Utility function to wait for a specified time
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Configuration
+// Configuration (will be populated from MongoDB or environment variables)
 const CONFIG = {
-  username: process.env.SC_ACCOUNT_CP_USERNAME,
-  password: process.env.SC_ACCOUNT_CP_PASSWORD,
-  twoFAKey: process.env.SC_ACCOUNT_CP_2FAKEY,
-  brands: {
-    REFRIGIWEAR_US: process.env.SC_BRAND_CP_REFRIGIWEAR_US,
-    BABYEXPERT_US: process.env.SC_BRAND_CP_BABYEXPERT_US,
-  },
-  // Dynamic brand configuration from environment (for API triggers)
+  username: null,
+  password: null,
+  twoFAKey: null,
+  brands: {},
+  // Dynamic brand configuration (for API triggers)
   brandUrl: process.env.BRAND_URL,
   brandName: process.env.BRAND_NAME,
   accountName: process.env.ACCOUNT_NAME,
+  accountId: process.env.ACCOUNT_ID, // MongoDB Account ID
+  brandId: process.env.BRAND_ID, // MongoDB Brand ID for single brand mode
   headless: process.env.HEADLESS === 'true',
   timeout: parseInt(process.env.TIMEOUT_MS || '180000', 10),
   sellerCentralUrl: 'https://sellercentral.amazon.com/home',
 };
 
-// Validate environment variables
-function validateEnvironmentVariables() {
+/**
+ * Fetch account credentials from MongoDB
+ */
+async function fetchAccountFromDB(accountId) {
+  try {
+    console.log(`🔍 Fetching account from MongoDB (ID: ${accountId})...`);
+    
+    const account = await Account.findById(accountId)
+      .select('+password +twoFAKey'); // Include password and twoFAKey fields
+    
+    if (!account) {
+      throw new Error(`Account not found with ID: ${accountId}`);
+    }
+    
+    console.log(`✅ Found account: ${account.accountName}`);
+    return {
+      accountName: account.accountName,
+      username: account.username,
+      password: account.password,
+      twoFAKey: account.twoFAKey,
+    };
+  } catch (error) {
+    console.error('❌ Failed to fetch account from MongoDB:', error.message);
+    throw error;
+  }
+}
+
+/**
+ * Fetch brands for an account from MongoDB
+ */
+async function fetchBrandsFromDB(accountId) {
+  try {
+    console.log(`🔍 Fetching brands for account from MongoDB...`);
+    
+    const brands = await Brand.find({ sellerCentralAccountId: accountId });
+    
+    console.log(`✅ Found ${brands.length} brand(s)`);
+    
+    const brandsMap = {};
+    brands.forEach(brand => {
+      brandsMap[brand.brandName] = brand.brandUrl;
+    });
+    
+    return brandsMap;
+  } catch (error) {
+    console.error('❌ Failed to fetch brands from MongoDB:', error.message);
+    throw error;
+  }
+}
+
+/**
+ * Fetch a specific brand from MongoDB
+ */
+async function fetchBrandFromDB(brandId) {
+  try {
+    console.log(`🔍 Fetching brand from MongoDB (ID: ${brandId})...`);
+    
+    const brand = await Brand.findById(brandId)
+      .populate({
+        path: 'sellerCentralAccountId',
+        select: '+password +twoFAKey'
+      });
+    
+    if (!brand) {
+      throw new Error(`Brand not found with ID: ${brandId}`);
+    }
+    
+    console.log(`✅ Found brand: ${brand.brandName}`);
+    return brand;
+  } catch (error) {
+    console.error('❌ Failed to fetch brand from MongoDB:', error.message);
+    throw error;
+  }
+}
+
+/**
+ * Fetch puppeteer configuration from MongoDB
+ */
+async function fetchPuppeteerConfig() {
+  try {
+    console.log('⚙️ Fetching Puppeteer configuration from MongoDB...');
+    
+    let config = await PuppeteerConfig.findOne();
+    
+    if (!config) {
+      console.log('⚠️ No Puppeteer config found in MongoDB, using defaults');
+      return {
+        headless: true,
+        timeout: 180000,
+        sellerCentralUrl: 'https://sellercentral.amazon.com/home',
+      };
+    }
+    
+    console.log(`✅ Puppeteer config loaded: headless=${config.headless}, timeout=${config.timeout}ms`);
+    return {
+      headless: config.headless,
+      timeout: config.timeout,
+      sellerCentralUrl: config.sellerCentralUrl,
+    };
+  } catch (error) {
+    console.warn('⚠️ Failed to fetch Puppeteer config from MongoDB, using defaults:', error.message);
+    return {
+      headless: true,
+      timeout: 180000,
+      sellerCentralUrl: 'https://sellercentral.amazon.com/home',
+    };
+  }
+}
+
+/**
+ * Load configuration from MongoDB or environment variables
+ */
+async function loadConfiguration() {
+  console.log('⚙️ Loading configuration...');
+  
+  // Connect to MongoDB
+  await connectDB();
+  
+  // Fetch Puppeteer configuration from MongoDB (unless overridden by env vars)
+  const puppeteerConfig = await fetchPuppeteerConfig();
+  
+  // Apply Puppeteer config (env vars take precedence)
+  if (process.env.HEADLESS !== undefined) {
+    CONFIG.headless = process.env.HEADLESS === 'true';
+    console.log(`📌 Using HEADLESS from environment: ${CONFIG.headless}`);
+  } else {
+    CONFIG.headless = puppeteerConfig.headless;
+  }
+  
+  if (process.env.TIMEOUT_MS !== undefined) {
+    CONFIG.timeout = parseInt(process.env.TIMEOUT_MS, 10);
+    console.log(`📌 Using TIMEOUT_MS from environment: ${CONFIG.timeout}ms`);
+  } else {
+    CONFIG.timeout = puppeteerConfig.timeout;
+  }
+  
+  CONFIG.sellerCentralUrl = puppeteerConfig.sellerCentralUrl;
+  
+  // Check if we're in API mode (specific brand requested by ID)
+  if (CONFIG.brandId) {
+    console.log('🎯 API Mode: Single Brand by ID');
+    const brand = await fetchBrandFromDB(CONFIG.brandId);
+    const account = brand.sellerCentralAccountId;
+    
+    CONFIG.accountName = account.accountName;
+    CONFIG.username = account.username;
+    CONFIG.password = account.password;
+    CONFIG.twoFAKey = account.twoFAKey;
+    CONFIG.brandName = brand.brandName;
+    CONFIG.brandUrl = brand.brandUrl;
+    
+    return;
+  }
+  
+  // Check if account ID is provided
+  if (CONFIG.accountId) {
+    console.log('🎯 Fetching from MongoDB by Account ID');
+    const account = await fetchAccountFromDB(CONFIG.accountId);
+    
+    CONFIG.accountName = account.accountName;
+    CONFIG.username = account.username;
+    CONFIG.password = account.password;
+    CONFIG.twoFAKey = account.twoFAKey;
+    
+    // Fetch brands for this account
+    CONFIG.brands = await fetchBrandsFromDB(CONFIG.accountId);
+    
+    return;
+  }
+  
+  // Check if account name is provided (fallback)
+  if (CONFIG.accountName) {
+    console.log(`🎯 Fetching from MongoDB by Account Name: ${CONFIG.accountName}`);
+    const account = await Account.findOne({ accountName: CONFIG.accountName })
+      .select('+password +twoFAKey');
+    
+    if (!account) {
+      throw new Error(`Account not found: ${CONFIG.accountName}`);
+    }
+    
+    CONFIG.accountId = account._id.toString();
+    CONFIG.username = account.username;
+    CONFIG.password = account.password;
+    CONFIG.twoFAKey = account.twoFAKey;
+    
+    // Fetch brands for this account
+    CONFIG.brands = await fetchBrandsFromDB(account._id);
+    
+    return;
+  }
+  
+  // Fallback to environment variables (legacy mode)
+  console.log('⚠️ Falling back to environment variables (legacy mode)');
+  CONFIG.username = process.env.SC_ACCOUNT_CP_USERNAME;
+  CONFIG.password = process.env.SC_ACCOUNT_CP_PASSWORD;
+  CONFIG.twoFAKey = process.env.SC_ACCOUNT_CP_2FAKEY;
+  CONFIG.brands = {
+    REFRIGIWEAR_US: process.env.SC_BRAND_CP_REFRIGIWEAR_US,
+    BABYEXPERT_US: process.env.SC_BRAND_CP_BABYEXPERT_US,
+  };
+  CONFIG.accountName = CONFIG.accountName || 'Legacy Account';
+}
+
+// Validate configuration
+function validateConfiguration() {
   const required = ['username', 'password', 'twoFAKey'];
   const missing = required.filter(key => !CONFIG[key]);
   
   if (missing.length > 0) {
-    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+    throw new Error(`Missing required configuration: ${missing.join(', ')}`);
   }
 }
 
@@ -252,9 +459,12 @@ async function main() {
   }, CONFIG.timeout);
 
   try {
-    // Validate environment variables
-    console.log('🔍 Validating environment variables...');
-    validateEnvironmentVariables();
+    // Load configuration from MongoDB
+    await loadConfiguration();
+    
+    // Validate configuration
+    console.log('🔍 Validating configuration...');
+    validateConfiguration();
 
     // Launch browser
     console.log('🚀 Launching browser...');
@@ -362,6 +572,8 @@ async function main() {
 
       clearTimeout(timeoutId);
       await browser.close();
+      await mongoose.disconnect();
+      console.log('✅ MongoDB disconnected');
       process.exit(0);
     }
 
@@ -382,6 +594,15 @@ async function main() {
     if (browser) {
       await browser.close();
     }
+    
+    // Disconnect from MongoDB
+    try {
+      await mongoose.disconnect();
+      console.log('✅ MongoDB disconnected');
+    } catch (e) {
+      console.error('Failed to disconnect from MongoDB:', e.message);
+    }
+    
     process.exit(1);
   }
 }

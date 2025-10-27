@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Trash2, Loader2, Tag, Calendar, ExternalLink, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Pencil } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Trash2, Loader2, Tag, Calendar, ExternalLink, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Pencil, Cookie, CheckCircle2, XCircle } from "lucide-react";
 import { EditBrandModal } from "@/components/edit-brand-modal";
 import { DeleteBrandModal } from "@/components/delete-brand-modal";
 import { AlertModal } from "@/components/alert-modal";
@@ -15,6 +16,8 @@ interface Brand {
     accountName: string;
   };
   brandUrl: string;
+  cookies?: string;
+  cookiesUpdatedAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -213,6 +216,9 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
               <th className="px-4 py-3 text-left text-sm font-semibold">
                 Brand URL
               </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold">
+                Cookies Status
+              </th>
               <th 
                 className="px-4 py-3 text-left text-sm font-semibold cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                 onClick={() => handleSort('createdAt')}
@@ -261,6 +267,41 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
                     <span className="truncate">{brand.brandUrl}</span>
                     <ExternalLink className="h-3.5 w-3.5 flex-shrink-0" />
                   </a>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2">
+                      {brand.cookies && brand.cookies.trim() !== '' ? (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                          <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                            Set
+                          </Badge>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="h-4 w-4 text-gray-400" />
+                          <Badge variant="secondary">
+                            Not Set
+                          </Badge>
+                        </>
+                      )}
+                    </div>
+                    {brand.cookies && brand.cookies.trim() !== '' && (
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Cookie className="h-3 w-3" />
+                        {brand.cookiesUpdatedAt ? (
+                          <span title="Cookies last updated">
+                            {formatDate(brand.cookiesUpdatedAt)}
+                          </span>
+                        ) : (
+                          <span className="italic text-muted-foreground/70" title="Timestamp not available (set before tracking was added)">
+                            Not tracked
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground">

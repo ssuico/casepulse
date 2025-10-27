@@ -1,15 +1,8 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface IAccount extends Document {
-  accountName: string;
-  username: string;
-  password: string;
-  twoFAKey: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+const { Schema } = mongoose;
 
-const AccountSchema = new Schema<IAccount>(
+const AccountSchema = new Schema(
   {
     accountName: {
       type: String,
@@ -38,13 +31,8 @@ const AccountSchema = new Schema<IAccount>(
   }
 );
 
-// NOTE: Credentials are stored in plaintext for automation worker access
-// This is necessary for the Puppeteer worker to login automatically
-// Ensure MongoDB access is properly secured and restricted
-
 // Prevent model recompilation in development
-const Account: Model<IAccount> =
-  mongoose.models.Account || mongoose.model<IAccount>('Account', AccountSchema);
+const Account = mongoose.models.Account || mongoose.model('Account', AccountSchema);
 
 export default Account;
 

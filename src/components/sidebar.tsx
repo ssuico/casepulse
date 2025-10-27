@@ -16,6 +16,7 @@ import {
   PanelLeftOpen,
   Sparkles,
   Package,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -53,6 +54,16 @@ const navigationSections = [
       //   href: "/analytics",
       //   icon: BarChart3,
       // },
+    ]
+  },
+  {
+    title: "Settings",
+    items: [
+      {
+        name: "Puppeteer Configuration",
+        href: "/puppeteer-config",
+        icon: Settings,
+      },
     ]
   }
 ];
@@ -109,7 +120,17 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       <div className="flex flex-col h-[calc(100vh-8rem)] overflow-y-auto overflow-x-hidden custom-scrollbar">
         <nav className={cn("flex-1 py-6", isCollapsed ? "px-2" : "px-3")}>
           {navigationSections.map((section, sectionIndex) => (
-            <div key={section.title} className={cn(sectionIndex > 0 && "mt-6")}>
+            <div key={section.title}>
+              {/* Divider before section (except first one) */}
+              {sectionIndex > 0 && (
+                <div className={cn(
+                  "relative my-6",
+                  isCollapsed ? "px-2" : "px-3"
+                )}>
+                  <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                </div>
+              )}
+              
               {/* Section Header */}
               {!isCollapsed && (
                 <div className="px-3 mb-2">

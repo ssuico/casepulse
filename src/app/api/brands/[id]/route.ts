@@ -48,7 +48,7 @@ export async function PUT(
     await dbConnect();
     const { id } = await params;
     const body = await request.json();
-    const { brandName, sellerCentralAccountId, brandUrl } = body;
+    const { brandName, sellerCentralAccountId, brandUrl, cookies } = body;
 
     // Validate required fields
     if (!brandName || !sellerCentralAccountId || !brandUrl) {
@@ -61,13 +61,47 @@ export async function PUT(
       );
     }
 
+    // Fetch the current brand to check if cookies actually changed
+    const currentBrand = await Brand.findById(id);
+    if (!currentBrand) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Brand not found',
+        },
+        { status: 404 }
+      );
+    }
+
+    // Prepare update object
+    const updateData: {
+      brandName: string;
+      sellerCentralAccountId: string;
+      brandUrl: string;
+      cookies?: string;
+      cookiesUpdatedAt?: Date;
+    } = {
+      brandName,
+      sellerCentralAccountId,
+      brandUrl,
+    };
+
+    // Only update cookies and timestamp if cookies value actually changed
+    if (cookies !== undefined) {
+      updateData.cookies = cookies;
+      
+      // Only update the timestamp if the cookies value is different from current value
+      const currentCookies = currentBrand.cookies || '';
+      const newCookies = cookies || '';
+      
+      if (currentCookies !== newCookies) {
+        updateData.cookiesUpdatedAt = new Date();
+      }
+    }
+
     const brand = await Brand.findByIdAndUpdate(
       id,
-      {
-        brandName,
-        sellerCentralAccountId,
-        brandUrl,
-      },
+      updateData,
       { new: true, runValidators: true }
     ).populate('sellerCentralAccountId', 'accountName');
 

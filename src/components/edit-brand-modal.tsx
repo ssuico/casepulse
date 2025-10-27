@@ -27,6 +27,7 @@ interface Brand {
     accountName: string;
   };
   brandUrl: string;
+  cookies?: string;
 }
 
 interface EditBrandModalProps {
@@ -48,6 +49,7 @@ export function EditBrandModal({
     brandName: "",
     sellerCentralAccountId: "",
     brandUrl: "",
+    cookies: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +60,7 @@ export function EditBrandModal({
         brandName: brand.brandName,
         sellerCentralAccountId: brand.sellerCentralAccountId._id,
         brandUrl: brand.brandUrl,
+        cookies: brand.cookies || "",
       });
     }
   }, [brand]);
@@ -94,7 +97,7 @@ export function EditBrandModal({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -103,11 +106,11 @@ export function EditBrandModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Brand</DialogTitle>
           <DialogDescription>
-            Update brand details and association with Seller Central account.
+            Update brand details, Seller Central account association, and authentication cookies.
           </DialogDescription>
         </DialogHeader>
 
@@ -166,6 +169,23 @@ export function EditBrandModal({
               />
               <p className="text-xs text-muted-foreground">
                 The URL to the brand's Amazon storefront or product page
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="cookies" className="font-semibold">Authentication Cookies</Label>
+              <textarea
+                id="cookies"
+                name="cookies"
+                value={formData.cookies}
+                onChange={handleChange}
+                rows={6}
+                disabled={isLoading}
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 font-mono"
+                placeholder="Paste cookies here (optional)..."
+              />
+              <p className="text-xs text-muted-foreground">
+                Optional: Paste the cookie string from your browser's developer tools for authentication
               </p>
             </div>
           </div>

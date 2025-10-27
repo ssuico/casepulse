@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Brand from '@/models/Brand';
+import '@/models/Account'; // Ensure Account model is registered
 
 // GET all brands
 export async function GET() {
   try {
     await dbConnect();
-    const brands = await Brand.find({}).populate('sellerCentralAccountId', 'accountName').sort({ createdAt: -1 });
+    const brands = await Brand.find({})
+      .populate('sellerCentralAccountId', 'accountName')
+      .sort({ createdAt: -1 });
     
     return NextResponse.json({
       success: true,

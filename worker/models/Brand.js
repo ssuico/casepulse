@@ -1,16 +1,8 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface IBrand extends Document {
-  brandName: string;
-  sellerCentralAccountId: mongoose.Types.ObjectId;
-  brandUrl: string;
-  cookies?: string;
-  cookiesUpdatedAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
+const { Schema } = mongoose;
 
-const BrandSchema = new Schema<IBrand>(
+const BrandSchema = new Schema(
   {
     brandName: {
       type: String,
@@ -41,8 +33,7 @@ const BrandSchema = new Schema<IBrand>(
 );
 
 // Prevent model recompilation in development
-const Brand: Model<IBrand> =
-  mongoose.models.Brand || mongoose.model<IBrand>('Brand', BrandSchema);
+const Brand = mongoose.models.Brand || mongoose.model('Brand', BrandSchema);
 
 export default Brand;
 
