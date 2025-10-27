@@ -362,52 +362,60 @@ export default function CasesPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Total Cases Card */}
-        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
-            <FileText className="h-16 w-16 text-white" />
-          </div>
-          <div className="relative text-right">
-            <p className="text-4xl font-bold text-white mb-1">{mockCases.length}</p>
-            <p className="text-sm text-white/80 font-medium">Total Cases</p>
+        <div className="relative bg-white rounded-lg p-6 shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.12),0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 cursor-pointer">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
+              <FileText className="h-7 w-7 text-white" strokeWidth={2.5} />
+            </div>
+            <div className="text-right">
+              <p className="text-3xl font-bold text-gray-900">{mockCases.length}</p>
+              <p className="text-sm text-gray-600 font-medium mt-1">Total Cases</p>
+            </div>
           </div>
         </div>
 
         {/* Open Cases Card */}
-        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
-            <FileText className="h-16 w-16 text-white" />
-          </div>
-          <div className="relative text-right">
-            <p className="text-4xl font-bold text-white mb-1">
-              {mockCases.filter(c => c.status === "open").length}
-            </p>
-            <p className="text-sm text-white/80 font-medium">Open Cases</p>
+        <div className="relative bg-white rounded-lg p-6 shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.12),0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 cursor-pointer">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
+              <FileText className="h-7 w-7 text-white" strokeWidth={2.5} />
+            </div>
+            <div className="text-right">
+              <p className="text-3xl font-bold text-gray-900">
+                {mockCases.filter(c => c.status === "open").length}
+              </p>
+              <p className="text-sm text-gray-600 font-medium mt-1">Open Cases</p>
+            </div>
           </div>
         </div>
 
         {/* In Progress Card */}
-        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
-            <RefreshCw className="h-16 w-16 text-white" />
-          </div>
-          <div className="relative text-right">
-            <p className="text-4xl font-bold text-white mb-1">
-              {mockCases.filter(c => c.status === "in_progress").length}
-            </p>
-            <p className="text-sm text-white/80 font-medium">In Progress</p>
+        <div className="relative bg-white rounded-lg p-6 shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.12),0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 cursor-pointer">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg">
+              <RefreshCw className="h-7 w-7 text-white" strokeWidth={2.5} />
+            </div>
+            <div className="text-right">
+              <p className="text-3xl font-bold text-gray-900">
+                {mockCases.filter(c => c.status === "in_progress").length}
+              </p>
+              <p className="text-sm text-gray-600 font-medium mt-1">In Progress</p>
+            </div>
           </div>
         </div>
 
         {/* Urgent Cases Card */}
-        <div className="relative bg-[#4b7bec] rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 opacity-20">
-            <AlertTriangle className="h-16 w-16 text-white" />
-          </div>
-          <div className="relative text-right">
-            <p className="text-4xl font-bold text-white mb-1">
-              {mockCases.filter(c => c.priority === "urgent").length}
-            </p>
-            <p className="text-sm text-white/80 font-medium">Urgent Priority</p>
+        <div className="relative bg-white rounded-lg p-6 shadow-[0_2px_4px_rgba(0,0,0,0.1),0_8px_16px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.12),0_12px_24px_rgba(0,0,0,0.12)] transition-all duration-300 cursor-pointer">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-red-500 to-red-600 shadow-lg">
+              <AlertTriangle className="h-7 w-7 text-white" strokeWidth={2.5} />
+            </div>
+            <div className="text-right">
+              <p className="text-3xl font-bold text-gray-900">
+                {mockCases.filter(c => c.priority === "urgent").length}
+              </p>
+              <p className="text-sm text-gray-600 font-medium mt-1">Urgent Priority</p>
+            </div>
           </div>
         </div>
       </div>
@@ -519,6 +527,16 @@ export default function CasesPage() {
           <table className="w-full">
             <thead className="bg-gradient-to-r from-muted/50 via-muted/40 to-muted/50 border-b border-border/50">
               <tr>
+                <th className="px-4 py-2 text-left text-sm font-medium">Create Date</th>
+                <th 
+                  className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
+                  onClick={() => handleSort('updatedAt')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Updated Date</span>
+                    <SortIcon field="updatedAt" />
+                  </div>
+                </th>
                 <th 
                   className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                   onClick={() => handleSort('id')}
@@ -530,39 +548,21 @@ export default function CasesPage() {
                 </th>
                 <th 
                   className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
-                  onClick={() => handleSort('title')}
-                >
-                  <div className="flex items-center gap-1">
-                    <span>Title</span>
-                    <SortIcon field="title" />
-                  </div>
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-medium">Workspace</th>
-                <th 
-                  className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
                   onClick={() => handleSort('status')}
                 >
                   <div className="flex items-center gap-1">
-                    <span>Status</span>
+                    <span>Case Status</span>
                     <SortIcon field="status" />
                   </div>
                 </th>
+                <th className="px-4 py-2 text-left text-sm font-medium">Primary Email</th>
                 <th 
                   className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
-                  onClick={() => handleSort('priority')}
+                  onClick={() => handleSort('title')}
                 >
                   <div className="flex items-center gap-1">
-                    <span>Priority</span>
-                    <SortIcon field="priority" />
-                  </div>
-                </th>
-                <th 
-                  className="px-4 py-2 text-left text-sm font-medium cursor-pointer hover:bg-muted/60 transition-all duration-200 group"
-                  onClick={() => handleSort('updatedAt')}
-                >
-                  <div className="flex items-center gap-1">
-                    <span>Updated</span>
-                    <SortIcon field="updatedAt" />
+                    <span>Case Title</span>
+                    <SortIcon field="title" />
                   </div>
                 </th>
                 <th className="px-4 py-2 text-left text-sm font-medium">Actions</th>
@@ -578,37 +578,12 @@ export default function CasesPage() {
                   }}
                 >
                   <td className="px-4 py-2">
-                    <div className="flex items-center space-x-2">
-                      <div className="p-1 rounded-lg bg-muted/30 group-hover:bg-muted/50 transition-colors">
-                      {getStatusIcon(caseItem.status)}
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                      <div className="p-1 rounded-lg bg-muted/30">
+                        <Clock className="h-3.5 w-3.5" />
                       </div>
-                      <span className="font-mono text-sm">{caseItem.id}</span>
+                      <span>{formatDate(caseItem.createdAt)}</span>
                     </div>
-                  </td>
-                  <td className="px-4 py-2">
-                    <div>
-                      <p className="text-sm text-foreground">{caseItem.title}</p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs">
-                          {caseItem.category}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2">
-                    <span className="text-sm">{caseItem.workspace}</span>
-                  </td>
-                  <td className="px-4 py-2">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg border shadow-sm ${getStatusColor(caseItem.status)}`}>
-                      <div className="w-1.5 h-1.5 rounded-full bg-current" />
-                      {caseItem.status.replace("_", " ")}
-                    </span>
-                  </td>
-                  <td className="px-4 py-2">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg border shadow-sm ${getPriorityColor(caseItem.priority)}`}>
-                      <AlertTriangle className="h-3 w-3" />
-                      {caseItem.priority}
-                    </span>
                   </td>
                   <td className="px-4 py-2">
                     <div className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -617,6 +592,26 @@ export default function CasesPage() {
                       </div>
                       <span>{formatDate(caseItem.updatedAt)}</span>
                     </div>
+                  </td>
+                  <td className="px-4 py-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="p-1 rounded-lg bg-muted/30 group-hover:bg-muted/50 transition-colors">
+                        {getStatusIcon(caseItem.status)}
+                      </div>
+                      <span className="font-mono text-sm">{caseItem.id}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg border shadow-sm ${getStatusColor(caseItem.status)}`}>
+                      <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                      {caseItem.status.replace("_", " ")}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2">
+                    <span className="text-sm text-muted-foreground">-</span>
+                  </td>
+                  <td className="px-4 py-2">
+                    <p className="text-sm text-foreground">{caseItem.title}</p>
                   </td>
                   <td className="px-4 py-2">
                     <div className="flex items-center gap-1">
