@@ -36,14 +36,16 @@ export async function GET(
     }
 
     // Return account with credentials for worker
+    // Note: password and twoFAKey are ENCRYPTED in MongoDB
+    // Worker will decrypt them using ENCRYPTION_KEY
     return NextResponse.json({
       success: true,
       data: {
         _id: account._id,
         accountName: account.accountName,
         username: account.username,
-        password: account.password, // Hashed
-        twoFAKey: account.twoFAKey, // Hashed
+        password: account.password, // ENCRYPTED - worker will decrypt
+        twoFAKey: account.twoFAKey, // ENCRYPTED - worker will decrypt
       },
     });
   } catch (error: unknown) {

@@ -59,7 +59,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new account (password and 2FA key will be hashed by the model)
+    // Create new account (password and 2FA key will be ENCRYPTED automatically by the model)
+    // The mongoose pre-save hook will encrypt these fields using AES-256-GCM
     const account = await Account.create({
       accountName,
       username,

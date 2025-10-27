@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import { encrypt, isEncrypted } from '@/lib/crypto';
 
 export interface IAccount extends Document {
   accountName: string;
@@ -38,9 +39,46 @@ const AccountSchema = new Schema<IAccount>(
   }
 );
 
-// NOTE: Credentials are stored in plaintext for automation worker access
-// This is necessary for the Puppeteer worker to login automatically
-// Ensure MongoDB access is properly secured and restricted
+// Encrypt password and 2FA key before saving
+AccountSchema.pre('save', async function (next) {
+  try {
+    // Only encrypt if the field was modified and is not already encrypted
+    if (this.isModified('password') && !isEncrypted(this.password)) {
+      this.password = encrypt(this.password);
+    }
+    
+    if (this.isModified('twoFAKey') && !isEncrypted(this.twoFAKey)) {
+      this.twoFAKey = encrypt(this.twoFAKey);
+    }
+    
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
+});
+
+// Encrypt password and 2FA key before update
+AccountSchema.pre('findOneAndUpdate', async function (next) {
+  try {
+    const update = this.getUpdate() as any;
+    
+    if (update.password && !isEncrypted(update.password)) {
+      update.password = encrypt(update.password);
+    }
+    
+    if (update.twoFAKey && !isEncrypted(update.twoFAKey)) {
+      update.twoFAKey = encrypt(update.twoFAKey);
+    }
+    
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
+});
+
+// NOTE: Credentials are stored ENCRYPTED in MongoDB for security
+// The automation worker will decrypt them when needed
+// Ensure ENCRYPTION_KEY is properly secured in environment variables
 
 // Prevent model recompilation in development
 const Account: Model<IAccount> =

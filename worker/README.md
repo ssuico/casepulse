@@ -4,16 +4,16 @@ A robust Puppeteer-based worker that automates login to Amazon Seller Central wi
 
 ## Features
 
-- ✅ **MongoDB-based credential management** (NEW!)
+- ✅ **100% MongoDB-based credential management** - All credentials stored securely in database
+- ✅ **API-triggered automation** - Run worker from the UI with one click
 - ✅ Automated login with username/password
 - ✅ 2FA code generation using TOTP (otplib)
 - ✅ Multi-brand account switching
 - ✅ Comprehensive error handling
 - ✅ Structured logging and status reporting
-- ✅ Session persistence option
 - ✅ Headless/headed mode toggle
-- ✅ Timeout protection (3 minutes default)
-- ✅ Multiple operation modes (Account ID, Brand ID, or legacy env vars)
+- ✅ Timeout protection (configurable via UI)
+- ✅ Two operation modes (Account ID or Brand ID)
 
 ## Installation
 
@@ -29,77 +29,69 @@ npm install
 cp env.example .env
 ```
 
-### 2. Configure MongoDB and Operation Mode
+### 2. Configure MongoDB Connection
 
-The worker now supports **three operation modes**:
+The worker fetches **all credentials and settings from MongoDB**. Only the MongoDB connection string is required:
 
-#### **Mode 1: MongoDB with Account ID (Recommended)**
 ```env
+# Required: MongoDB connection
 MONGODB_URI=mongodb://localhost:27017/casepulse
-ACCOUNT_ID=6123456789abcdef12345678
+
+# Optional: Override Puppeteer settings for testing
 HEADLESS=false
 TIMEOUT_MS=180000
 ```
-✅ Fetches account credentials and **all brands** for that account from MongoDB
 
-#### **Mode 2: MongoDB with Brand ID**
-```env
-MONGODB_URI=mongodb://localhost:27017/casepulse
-BRAND_ID=6123456789abcdef87654321
-HEADLESS=false
-TIMEOUT_MS=180000
+### 3. Operation Modes
+
+The worker is typically **triggered from the UI** (Brands & Accounts page), but can also be run manually:
+
+#### **Mode 1: Trigger for Specific Brand (Most Common via UI)**
+```bash
+BRAND_ID=6123456789abcdef87654321 npm start
 ```
-✅ Fetches a specific brand and its account credentials from MongoDB
+✅ Fetches the brand and its account credentials from MongoDB  
+✅ Logs in and navigates directly to that brand's page  
+✅ This is what happens when you click the Play button in the UI
 
-#### **Mode 3: MongoDB with Account Name (Fallback)**
-```env
-MONGODB_URI=mongodb://localhost:27017/casepulse
-ACCOUNT_NAME=CP Account
-HEADLESS=false
-TIMEOUT_MS=180000
+#### **Mode 2: Trigger for All Brands in Account**
+```bash
+ACCOUNT_ID=6123456789abcdef12345678 npm start
 ```
-✅ Searches for account by name and fetches all brands
-
-#### **Mode 4: Legacy (Environment Variables)**
-```env
-SC_ACCOUNT_CP_USERNAME=your_email@example.com
-SC_ACCOUNT_CP_PASSWORD=your_password_here
-SC_ACCOUNT_CP_2FAKEY=your_2fa_secret_key_here
-
-# Brand URLs (optional)
-SC_BRAND_CP_REFRIGIWEAR_US=https://sellercentral.amazon.com/home?mons_sel_mkid=...
-SC_BRAND_CP_BABYEXPERT_US=https://sellercentral.amazon.com/home?mons_sel_dir_mcid=...
-
-HEADLESS=false
-TIMEOUT_MS=180000
-```
-⚠️ Falls back to environment variables if no MongoDB IDs/names are provided
+✅ Fetches account credentials from MongoDB  
+✅ Fetches all brands for that account  
+✅ Logs in and opens all brand pages in separate tabs
 
 ### Getting Your 2FA Secret Key
 
 When setting up 2FA on Amazon Seller Central:
 1. Choose "Authenticator app" option
 2. Click "Can't scan the barcode?"
-3. Copy the secret key shown
-4. Store this in MongoDB or use as `SC_ACCOUNT_CP_2FAKEY`
+3. Copy the secret key shown (e.g., `JBSWY3DPEHPK3PXP`)
+4. Store this in the **Accounts** page in the UI when creating/editing an account
 
 ## Usage
 
-### Run the worker:
-```bash
-npm start
-```
+### Option 1: Trigger from UI (Recommended)
+1. Go to **Brands & Accounts** page
+2. Find the brand you want to login to
+3. Click the **green Play button** (▶️)
+4. The worker starts automatically and opens the browser
 
-Or directly:
+### Option 2: Run Manually (For Testing)
 ```bash
-node seller-central-login.js
+# For a specific brand
+BRAND_ID=your_brand_id npm start
+
+# For all brands in an account
+ACCOUNT_ID=your_account_id npm start
 ```
 
 ### Development Mode (with browser visible):
 Set `HEADLESS=false` in `.env` to see the browser automation in action.
 
 ### Production Mode (headless):
-Set `HEADLESS=true` in `.env` for server deployments.
+Set `HEADLESS=true` in `.env` or configure via the **Puppeteer Configuration** page in the UI.
 
 ## MongoDB Schema
 
@@ -183,12 +175,13 @@ All errors are logged with context and the browser is closed gracefully.
 ### Configuration Flow:
 
 1. **Load from MongoDB** (Priority Order):
-   - Brand ID → Fetch brand + account credentials
-   - Account ID → Fetch account + all brands
-   - Account Name → Search and fetch account + all brands
+   - Brand ID → Fetch specific brand + account credentials
+   - Account ID → Fetch account credentials + all brands for that account
+   - **No fallback** - Worker requires BRAND_ID or ACCOUNT_ID
    
-2. **Fallback to Environment Variables**:
-   - If no MongoDB IDs/names provided, use legacy env vars
+2. **Puppeteer Settings**:
+   - Fetched from MongoDB (PuppeteerConfig collection)
+   - Can be overridden by HEADLESS and TIMEOUT_MS env vars for testing
 
 ### Error Recovery:
 

@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Loader2, Tag, Calendar, ExternalLink, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Pencil, Cookie, CheckCircle2, XCircle } from "lucide-react";
+import { Trash2, Loader2, Tag, Calendar, ExternalLink, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, Pencil, Cookie, CheckCircle2, XCircle, Play } from "lucide-react";
 import { EditBrandModal } from "@/components/edit-brand-modal";
 import { DeleteBrandModal } from "@/components/delete-brand-modal";
 import { AlertModal } from "@/components/alert-modal";
@@ -14,7 +14,7 @@ interface Brand {
   sellerCentralAccountId: {
     _id: string;
     accountName: string;
-  };
+  } | null;
   brandUrl: string;
   cookies?: string;
   cookiesUpdatedAt?: string;
@@ -38,6 +38,7 @@ type SortOrder = 'asc' | 'desc';
 
 export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [runningWorkerId, setRunningWorkerId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [sortField, setSortField] = useState<SortField>('createdAt');
@@ -103,6 +104,36 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
     }
   };
 
+  const handleRunWorker = async (brand: Brand) => {
+    setRunningWorkerId(brand._id);
+
+    try {
+      const response = await fetch(`/api/brands/${brand._id}/run-worker`, {
+        method: "POST",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to start worker");
+      }
+
+      showAlert(
+        "Worker Started",
+        `The Seller Central login worker has been started for ${brand.brandName}. The browser will open automatically.`,
+        "success"
+      );
+    } catch (err: unknown) {
+      showAlert(
+        "Worker Failed",
+        err instanceof Error ? err.message : "Failed to start worker",
+        "error"
+      );
+    } finally {
+      setRunningWorkerId(null);
+    }
+  };
+
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -119,8 +150,8 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
       let bValue: string | number;
 
       if (sortField === 'sellerCentralAccountId.accountName') {
-        aValue = a.sellerCentralAccountId.accountName;
-        bValue = b.sellerCentralAccountId.accountName;
+        aValue = a.sellerCentralAccountId?.accountName || '';
+        bValue = b.sellerCentralAccountId?.accountName || '';
       } else if (sortField === 'createdAt') {
         aValue = new Date(a.createdAt).getTime();
         bValue = new Date(b.createdAt).getTime();
@@ -255,7 +286,11 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <p className="text-sm font-medium">{brand.sellerCentralAccountId.accountName}</p>
+                  <p className="text-sm font-medium">
+                    {brand.sellerCentralAccountId?.accountName || (
+                      <span className="text-red-500 italic">No Account</span>
+                    )}
+                  </p>
                 </td>
                 <td className="px-4 py-3">
                   <a 
@@ -313,6 +348,20 @@ export function BrandsTable({ brands, onBrandDeleted, accounts }: BrandsTablePro
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRunWorker(brand)}
+                      disabled={runningWorkerId === brand._id}
+                      className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50/80 hover:scale-110 transition-all duration-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Run Seller Central login worker"
+                    >
+                      {runningWorkerId === brand._id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Play className="h-4 w-4" />
+                      )}
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"

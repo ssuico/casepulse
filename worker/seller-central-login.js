@@ -6,6 +6,7 @@ import connectDB from './lib/mongodb.js';
 import Account from './models/Account.js';
 import Brand from './models/Brand.js';
 import PuppeteerConfig from './models/PuppeteerConfig.js';
+import { decrypt } from './lib/crypto.js';
 
 // Load environment variables
 dotenv.config();
@@ -13,20 +14,27 @@ dotenv.config();
 // Utility function to wait for a specified time
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Configuration (will be populated from MongoDB or environment variables)
+// Configuration (will be populated from MongoDB)
 const CONFIG = {
+  // TRIGGER PARAMETERS (set dynamically by API or manual run)
+  // These tell us WHICH data to fetch from MongoDB
+  brandId: process.env.BRAND_ID,    // Brand ID to process (set by API trigger)
+  accountId: process.env.ACCOUNT_ID, // Account ID to process (alternative to brandId)
+  
+  // CREDENTIALS (fetched from MongoDB based on brandId/accountId)
   username: null,
   password: null,
   twoFAKey: null,
+  accountName: null,
+  
+  // BRAND DATA (fetched from MongoDB)
   brands: {},
-  // Dynamic brand configuration (for API triggers)
-  brandUrl: process.env.BRAND_URL,
-  brandName: process.env.BRAND_NAME,
-  accountName: process.env.ACCOUNT_NAME,
-  accountId: process.env.ACCOUNT_ID, // MongoDB Account ID
-  brandId: process.env.BRAND_ID, // MongoDB Brand ID for single brand mode
-  headless: process.env.HEADLESS === 'true',
-  timeout: parseInt(process.env.TIMEOUT_MS || '180000', 10),
+  brandUrl: null,
+  brandName: null,
+  
+  // PUPPETEER SETTINGS (fetched from MongoDB, can be overridden by env vars for testing)
+  headless: true,
+  timeout: 180000,
   sellerCentralUrl: 'https://sellercentral.amazon.com/home',
 };
 
@@ -45,11 +53,17 @@ async function fetchAccountFromDB(accountId) {
     }
     
     console.log(`✅ Found account: ${account.accountName}`);
+    console.log(`🔓 Decrypting credentials...`);
+    
+    // Decrypt password and 2FA key
+    const decryptedPassword = decrypt(account.password);
+    const decryptedTwoFAKey = decrypt(account.twoFAKey);
+    
     return {
       accountName: account.accountName,
       username: account.username,
-      password: account.password,
-      twoFAKey: account.twoFAKey,
+      password: decryptedPassword,
+      twoFAKey: decryptedTwoFAKey,
     };
   } catch (error) {
     console.error('❌ Failed to fetch account from MongoDB:', error.message);
@@ -98,6 +112,14 @@ async function fetchBrandFromDB(brandId) {
     }
     
     console.log(`✅ Found brand: ${brand.brandName}`);
+    console.log(`🔓 Decrypting account credentials...`);
+    
+    // Decrypt the account credentials
+    if (brand.sellerCentralAccountId && brand.sellerCentralAccountId.password) {
+      brand.sellerCentralAccountId.password = decrypt(brand.sellerCentralAccountId.password);
+      brand.sellerCentralAccountId.twoFAKey = decrypt(brand.sellerCentralAccountId.twoFAKey);
+    }
+    
     return brand;
   } catch (error) {
     console.error('❌ Failed to fetch brand from MongoDB:', error.message);
@@ -123,7 +145,10 @@ async function fetchPuppeteerConfig() {
       };
     }
     
-    console.log(`✅ Puppeteer config loaded: headless=${config.headless}, timeout=${config.timeout}ms`);
+    console.log(`✅ Puppeteer config loaded from MongoDB:`);
+    console.log(`   - Headless: ${config.headless}`);
+    console.log(`   - Timeout: ${config.timeout}ms`);
+    console.log(`   - Seller Central URL: ${config.sellerCentralUrl}`);
     return {
       headless: config.headless,
       timeout: config.timeout,
@@ -151,12 +176,13 @@ async function loadConfiguration() {
   // Fetch Puppeteer configuration from MongoDB (unless overridden by env vars)
   const puppeteerConfig = await fetchPuppeteerConfig();
   
-  // Apply Puppeteer config (env vars take precedence)
+  // Apply Puppeteer config (env vars take precedence for testing)
   if (process.env.HEADLESS !== undefined) {
     CONFIG.headless = process.env.HEADLESS === 'true';
     console.log(`📌 Using HEADLESS from environment: ${CONFIG.headless}`);
   } else {
     CONFIG.headless = puppeteerConfig.headless;
+    console.log(`📌 Using HEADLESS from MongoDB: ${CONFIG.headless}`);
   }
   
   if (process.env.TIMEOUT_MS !== undefined) {
@@ -164,9 +190,17 @@ async function loadConfiguration() {
     console.log(`📌 Using TIMEOUT_MS from environment: ${CONFIG.timeout}ms`);
   } else {
     CONFIG.timeout = puppeteerConfig.timeout;
+    console.log(`📌 Using TIMEOUT_MS from MongoDB: ${CONFIG.timeout}ms`);
   }
   
-  CONFIG.sellerCentralUrl = puppeteerConfig.sellerCentralUrl;
+  // Seller Central URL (env var override for testing only)
+  if (process.env.SELLER_CENTRAL_URL !== undefined) {
+    CONFIG.sellerCentralUrl = process.env.SELLER_CENTRAL_URL;
+    console.log(`📌 Using SELLER_CENTRAL_URL from environment: ${CONFIG.sellerCentralUrl}`);
+  } else {
+    CONFIG.sellerCentralUrl = puppeteerConfig.sellerCentralUrl;
+    console.log(`📌 Using SELLER_CENTRAL_URL from MongoDB: ${CONFIG.sellerCentralUrl}`);
+  }
   
   // Check if we're in API mode (specific brand requested by ID)
   if (CONFIG.brandId) {
@@ -200,37 +234,8 @@ async function loadConfiguration() {
     return;
   }
   
-  // Check if account name is provided (fallback)
-  if (CONFIG.accountName) {
-    console.log(`🎯 Fetching from MongoDB by Account Name: ${CONFIG.accountName}`);
-    const account = await Account.findOne({ accountName: CONFIG.accountName })
-      .select('+password +twoFAKey');
-    
-    if (!account) {
-      throw new Error(`Account not found: ${CONFIG.accountName}`);
-    }
-    
-    CONFIG.accountId = account._id.toString();
-    CONFIG.username = account.username;
-    CONFIG.password = account.password;
-    CONFIG.twoFAKey = account.twoFAKey;
-    
-    // Fetch brands for this account
-    CONFIG.brands = await fetchBrandsFromDB(account._id);
-    
-    return;
-  }
-  
-  // Fallback to environment variables (legacy mode)
-  console.log('⚠️ Falling back to environment variables (legacy mode)');
-  CONFIG.username = process.env.SC_ACCOUNT_CP_USERNAME;
-  CONFIG.password = process.env.SC_ACCOUNT_CP_PASSWORD;
-  CONFIG.twoFAKey = process.env.SC_ACCOUNT_CP_2FAKEY;
-  CONFIG.brands = {
-    REFRIGIWEAR_US: process.env.SC_BRAND_CP_REFRIGIWEAR_US,
-    BABYEXPERT_US: process.env.SC_BRAND_CP_BABYEXPERT_US,
-  };
-  CONFIG.accountName = CONFIG.accountName || 'Legacy Account';
+  // If no account ID or brand ID is provided, we can't proceed
+  throw new Error('No ACCOUNT_ID or BRAND_ID provided. Worker must be triggered with a valid account or brand ID.');
 }
 
 // Validate configuration
@@ -269,40 +274,65 @@ async function login(page) {
       return { success: true, step: 'login', message: 'Already logged in' };
     }
 
-    // Wait for email input field
-    console.log('⏳ Waiting for login form...');
-    try {
-      await page.waitForSelector('input[type="email"], input[name="email"], input#ap_email', {
-        timeout: 15000,
-      });
-    } catch (error) {
-      // Check for captcha
-      const hasCaptcha = await page.evaluate(() => {
-        return document.body.innerText.includes('Enter the characters you see below') ||
-               document.querySelector('#auth-captcha-image') !== null;
-      });
-      
-      if (hasCaptcha) {
-        throw new Error('CAPTCHA detected - manual intervention required');
-      }
-      throw new Error('Login form not found - page may have changed');
-    }
-
-    // Enter username/email
-    console.log('📧 Entering username...');
-    await page.type('input[type="email"], input[name="email"], input#ap_email', CONFIG.username, {
-      delay: 100,
+    // Check if password field is already visible (email pre-filled scenario)
+    console.log('🔍 Checking login form state...');
+    const passwordFieldVisible = await page.evaluate(() => {
+      const passwordField = document.querySelector('input[type="password"], input[name="password"], input#ap_password');
+      return passwordField !== null && passwordField.offsetParent !== null;
     });
 
-    // Click Continue/Next button
-    console.log('👉 Clicking continue...');
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 }).catch(() => {}),
-      page.click('input#continue, input[type="submit"], button[type="submit"]'),
-    ]);
+    if (passwordFieldVisible) {
+      // Email is already filled, skip to password entry
+      console.log('ℹ️ Email already filled, proceeding to password entry...');
+    } else {
+      // Need to enter email first
+      console.log('⏳ Waiting for email field...');
+      try {
+        await page.waitForSelector('input[type="email"], input[name="email"], input#ap_email', {
+          timeout: 15000,
+        });
+      } catch (error) {
+        // Check for captcha
+        const hasCaptcha = await page.evaluate(() => {
+          return document.body.innerText.includes('Enter the characters you see below') ||
+                 document.querySelector('#auth-captcha-image') !== null;
+        });
+        
+        if (hasCaptcha) {
+          throw new Error('CAPTCHA detected - manual intervention required');
+        }
+        throw new Error('Login form not found - page may have changed');
+      }
 
-    // Wait a moment for page transition
-    await wait(2000);
+      // Check if email field is disabled or already has value
+      const emailFieldState = await page.evaluate(() => {
+        const emailField = document.querySelector('input[type="email"], input[name="email"], input#ap_email');
+        return {
+          disabled: emailField?.disabled || false,
+          hasValue: emailField?.value ? emailField.value.length > 0 : false,
+        };
+      });
+
+      if (emailFieldState.disabled || emailFieldState.hasValue) {
+        console.log('ℹ️ Email field is disabled or already filled, skipping email entry...');
+      } else {
+        // Enter username/email
+        console.log('📧 Entering username...');
+        await page.type('input[type="email"], input[name="email"], input#ap_email', CONFIG.username, {
+          delay: 100,
+        });
+      }
+
+      // Click Continue/Next button
+      console.log('👉 Clicking continue...');
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 }).catch(() => {}),
+        page.click('input#continue, input[type="submit"], button[type="submit"]'),
+      ]);
+
+      // Wait a moment for page transition
+      await wait(2000);
+    }
 
     // Enter password
     console.log('🔑 Waiting for password field...');
